@@ -4,7 +4,7 @@ import {
   BarChart,
   BasicTable,
   Chart,
-  IntoTheBlock,
+  // IntoTheBlock,
   KPI,
   Link,
   PageHeader,
@@ -188,7 +188,7 @@ function PairPage(props) {
     <AppShell>
       <Head>
         <title>
-          {pair.token0.symbol}-{pair.token1.symbol} | SushiSwap Analytics
+          {pair.token0.symbol}-{pair.token1.symbol} | SwipeSwap Analytics
         </title>
       </Head>
       <PageHeader>
@@ -408,9 +408,9 @@ function PairPage(props) {
           ]}
         />
       </Box>
-      <Box my={4}>
+      {/* <Box my={4}>
         <IntoTheBlock pairAddress={pair.id} />
-      </Box>
+      </Box> */}
       <Box my={4}>
         <Transactions transactions={transactions} txCount={pair.txCount} />
       </Box>

@@ -25,7 +25,7 @@ import {
   getPoolHistories,
   getPoolIds,
   getPools,
-  getSushiToken,
+  getSwipeToken,
   poolHistoryQuery,
   poolQuery,
   tokenQuery,
@@ -91,7 +91,7 @@ function PoolPage() {
     },
   });
 
-  const sushiPrice =
+  const swipePrice =
     parseFloat(token?.derivedETH) * parseFloat(bundles[0].ethPrice);
 
   const {
@@ -172,7 +172,7 @@ function PoolPage() {
   return (
     <AppShell>
       <Head>
-        <title>Pool {id} | SushiSwap Analytics</title>
+        <title>Pool {id} | SwipeSwap Analytics</title>
       </Head>
 
       <PageHeader mb={3}>
@@ -442,7 +442,7 @@ function PoolPage() {
 export async function getStaticProps({ params: { id } }) {
   const client = getApollo();
   await getEthPrice(client);
-  await getSushiToken(client);
+  await getSwipeToken(client);
   await getPool(id, client);
   await getPoolHistories(id, client);
   return {

@@ -158,7 +158,7 @@ export async function getPools(client = getApollo()) {
     "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2"
   );
 
-  const sushiPrice = ethPrice * token.derivedETH;
+  const swipePrice = ethPrice * token.derivedETH;
 
   // MASTERCHEF
   const {
@@ -209,7 +209,7 @@ export async function getPools(client = getApollo()) {
             1e18;
 
 
-          const roiPerBlock = ((rewardPerBlock * 3) * sushiPrice) / balanceUSD;
+          const roiPerBlock = ((rewardPerBlock * 3) * swipePrice) / balanceUSD;
 
           const roiPerHour = roiPerBlock * blocksPerHour;
 
@@ -227,7 +227,7 @@ export async function getPools(client = getApollo()) {
             roiPerDay,
             roiPerMonth,
             roiPerYear,
-            rewardPerThousand: 1 * roiPerDay * (1000 / sushiPrice),
+            rewardPerThousand: 1 * roiPerDay * (1000 / swipePrice),
             tvl:
               (pair.reserveUSD / pair.totalSupply) *
               liquidityPosition.liquidityTokenBalance,

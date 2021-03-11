@@ -3,6 +3,24 @@ import css from "styled-jsx/css";
 // Use styled-jsx instead of global CSS because global CSS
 // does not work for AMP pages: https://github.com/vercel/next.js/issues/10549
 export default css.global`
+  @font-face {
+    font-family: "Avenir";
+    font-style: normal;
+    font-weight: normal;
+    src: url(/fonts/Avenir-next/AvenirNextLTPro-Regular.otf) format("opentype");
+  }
+  @font-face {
+    font-family: "Avenir";
+    font-style: normal;
+    font-weight: bold;
+    src: url(/fonts/Avenir-next/AvenirNextLTPro-Bold.otf) format("opentype");
+  }
+  @font-face {
+    font-family: "Avenir";
+    font-style: italic;
+    font-weight: normal;
+    src: url(/fonts/Avenir-next/AvenirNextLTPro-It.otf) format("opentype");
+  }
   /* latin */
   @font-face {
     font-family: "Inter";

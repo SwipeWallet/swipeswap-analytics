@@ -12,13 +12,13 @@ import { createMuiTheme, responsiveFontSizes } from "@material-ui/core/styles";
 
 export const palette = {
   primary: {
-    main: "#B93CF6",
+    main: "#2e2e2e",
   },
   positive: {
-    main: green[500],
+    main: '#56ae26',
   },
   negative: {
-    main: red[500],
+    main: '#ef0000',
   },
 
   seaweed: {
@@ -49,7 +49,8 @@ export const palette = {
 };
 
 const fontFamily = [
-  "Inter",
+  "Avenir",
+  // "Inter",
   "-apple-system",
   "BlinkMacSystemFont",
   "Segoe UI",

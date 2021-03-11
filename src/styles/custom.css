@@ -1,0 +1,60 @@
+:root {
+  --color-primary: #fd4b2e;
+}
+
+.MuiListItem-button:hover,
+.MuiListItem-root.Mui-selected {
+  background-color: transparent !important;
+}
+
+.MuiListItem-root:hover,
+.MuiListItem-root:hover .MuiListItemIcon-root,
+.MuiListItem-root.Mui-selected,
+.MuiListItem-root.Mui-selected .MuiListItemIcon-root {
+  color: var(--color-primary) !important;
+}
+
+.MuiListItem-root.Mui-selected .MuiListItemText-root,
+.MuiListItem-root:hover .MuiListItemText-root {
+  flex: unset;
+  position: relative;
+}
+
+.MuiListItem-root.Mui-selected .MuiListItemText-root:after,
+.MuiListItem-root:hover .MuiListItemText-root:after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  height: 4px;
+  width: 100%;
+  background: var(--color-primary);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  min-width: 64px;
+}
+
+.MuiTableContainer-root {
+  padding: 0 25px;
+  border: 1px solid rgba(5, 7, 9, 0.12);
+  border-radius: 6px;
+  box-shadow: 0px 4px 13px 0 rgba(124, 124, 124, 0.13);
+}
+
+.MuiTableCell-head,
+.MuiTableSortLabel-root.MuiTableSortLabel-active,
+.MuiTableSortLabel-root.MuiTableSortLabel-active .MuiTableSortLabel-icon {
+  color: var(--color-primary) !important;
+}
+
+tbody .MuiTableCell-root {
+  border-bottom: 0 !important;
+}
+
+.MuiTablePagination-root .MuiTablePagination-toolbar {
+  padding-left: 0;
+  justify-content: center;
+}
+
+.MuiTablePagination-spacer {
+  flex: 0 !important;
+}

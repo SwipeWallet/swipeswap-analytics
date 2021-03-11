@@ -51,7 +51,6 @@ import {
 import React, { useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-import Sushi from "./Sushi";
 import { useRouter } from "next/router";
 
 const drawerWidth = 240;
@@ -67,7 +66,13 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(3),
   },
   // necessary for content to be below app bar
-  toolbar: theme.mixins.toolbar,
+  toolbar: {
+    ...theme.mixins.toolbar,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
 }));
 
 export default function AppNavigation() {
@@ -91,14 +96,15 @@ export default function AppNavigation() {
     <div classes={classes.root}>
       <div className={classes.toolbar}>
         <Hidden smUp implementation="css">
-          <Box display="flex" alignItems="center" py={0.5}>
+          {/* <Box display="flex" alignItems="center" py={0.5}>
             <IconButton edge={false} onClick={() => router.push("/")}>
               <Sushi />
             </IconButton>
             <Typography variant="subtitle1" color="textPrimary" noWrap>
-              Sushi Analytics
+              Swipe Analytics
             </Typography>
-          </Box>
+          </Box> */}
+          <img src="/svgs/logo/logo.png" alt="Swipe Analysis" />
         </Hidden>
       </div>
       <List
@@ -120,10 +126,10 @@ export default function AppNavigation() {
           <ListItemIcon>
             <DashboardOutlined />
           </ListItemIcon>
-          <ListItemText primary="Dashboard" />
+          <ListItemText primary="Overview" />
         </ListItem>
 
-        <ListItem
+        {/* <ListItem
           key="/bar"
           button
           selected={router.pathname === "/bar"}
@@ -133,8 +139,7 @@ export default function AppNavigation() {
             <FastfoodOutlined />
           </ListItemIcon>
           <ListItemText primary="Bar" />
-          {/* {open ? <ExpandLess /> : <ExpandMore />} */}
-        </ListItem>
+        </ListItem> */}
 
         {/* <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
@@ -160,7 +165,7 @@ export default function AppNavigation() {
           </List>
         </Collapse> */}
 
-        <ListItem button>
+        {/* <ListItem button>
           <ListItemIcon>
             <WavesOutlined />
           </ListItemIcon>
@@ -191,33 +196,102 @@ export default function AppNavigation() {
               </ListItemIcon>
               <ListItemText primary="All" />
             </ListItem>
-
-            {/* <ListItem
-              button
-              selected={router.pathname === "/pools/gainers"}
-              onClick={() => router.push("/pools/gainers")}
-              className={classes.nested}
-            >
-              <ListItemIcon>
-                <TrendingUpOutlined />
-              </ListItemIcon>
-              <ListItemText primary="Gainers" />
-            </ListItem>
-            <ListItem
-              button
-              selected={router.pathname === "/pools/losers"}
-              onClick={() => router.push("/pools/losers")}
-              className={classes.nested}
-            >
-              <ListItemIcon>
-                <TrendingDownOutlined />
-              </ListItemIcon>
-              <ListItemText primary="Losers" />
-            </ListItem> */}
           </List>
-        </Collapse>
+        </Collapse> */}
 
-        <ListItem button>
+        <ListItem
+          key="/tokens"
+          button
+          selected={router.pathname.includes("tokens")}
+          onClick={() => router.push("/tokens")}
+        >
+          <ListItemIcon>
+            <MoneyOutlined />
+          </ListItemIcon>
+          <ListItemText primary="Tokens" />
+        </ListItem>
+        {/* <ListItem
+            key="/tokens"
+            button
+            selected={router.pathname.includes("tokens")}
+            onClick={() => router.push("/tokens")}
+          >
+            <ListItemIcon>
+              <MoneyOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Tokens" />
+          </ListItem>
+          <ListItem
+            button
+            key="/portfolio"
+            selected={router.pathname.includes("/portfolio")}
+            onClick={() => {
+              const defaultAddress = localStorage.getItem("defaultAddress");
+              if (defaultAddress) {
+                router.push("/users/" + defaultAddress);
+              } else {
+                handleClickOpen();
+              }
+            }}
+          >
+            <ListItemIcon>
+              <AccountTreeOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Portfolio" />
+          </ListItem>
+        </List>
+        <Dialog
+          maxWidth="sm"
+          open={dialogOpen}
+          onClose={handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Portfolio</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Enter an address and click load.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="address"
+              label="Address"
+              type="text"
+              onChange={(event) => {
+                setAddress(event.target.value);
+              }}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                localStorage.setItem("defaultAddress", address);
+                router.push("/users/" + address);
+                handleClose();
+              }}
+              color="primary"
+            >
+              Load
+            </Button>
+          </DialogActions>
+        </Dialog> */}
+
+        <ListItem
+          key="/pairs"
+          button
+          selected={router.pathname.includes("pairs")}
+          onClick={() => router.push("/pairs")}
+        >
+          <ListItemIcon>
+            <LinkOutlined />
+          </ListItemIcon>
+          <ListItemText primary="Pairs" />
+        </ListItem>
+        {/* <ListItem button>
           <ListItemIcon>
             <LinkOutlined />
           </ListItemIcon>
@@ -272,76 +346,8 @@ export default function AppNavigation() {
               <ListItemText primary="Losers" />
             </ListItem>
           </List>
-        </Collapse>
-        <ListItem
-          key="/tokens"
-          button
-          selected={router.pathname.includes("tokens")}
-          onClick={() => router.push("/tokens")}
-        >
-          <ListItemIcon>
-            <MoneyOutlined />
-          </ListItemIcon>
-          <ListItemText primary="Tokens" />
-        </ListItem>
-        <ListItem
-          button
-          key="/portfolio"
-          selected={router.pathname.includes("/portfolio")}
-          onClick={() => {
-            const defaultAddress = localStorage.getItem("defaultAddress");
-            if (defaultAddress) {
-              router.push("/users/" + defaultAddress);
-            } else {
-              handleClickOpen();
-            }
-          }}
-        >
-          <ListItemIcon>
-            <AccountTreeOutlined />
-          </ListItemIcon>
-          <ListItemText primary="Portfolio" />
-        </ListItem>
+        </Collapse> */}
       </List>
-      <Dialog
-        maxWidth="sm"
-        open={dialogOpen}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <DialogTitle id="form-dialog-title">Portfolio</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Enter an address and click load.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="address"
-            label="Address"
-            type="text"
-            onChange={(event) => {
-              setAddress(event.target.value);
-            }}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              localStorage.setItem("defaultAddress", address);
-              router.push("/users/" + address);
-              handleClose();
-            }}
-            color="primary"
-          >
-            Load
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 }

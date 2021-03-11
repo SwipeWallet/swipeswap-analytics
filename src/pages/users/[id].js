@@ -26,7 +26,7 @@ import {
   getLatestBlock,
   getPairs,
   getPoolUser,
-  getSushiToken,
+  getSwipeToken,
   getToken,
   getUser,
   latestBlockQuery,
@@ -136,7 +136,7 @@ function UserPage() {
   //   60000
   // );
 
-  const sushiPrice =
+  const swipePrice =
     parseFloat(token?.derivedETH) * parseFloat(bundles[0].ethPrice);
 
   // BAR
@@ -248,7 +248,7 @@ function UserPage() {
         sushiAtLockup) *
       2;
 
-    const sushiLockedUSD = sushiLocked * sushiPrice;
+    const sushiLockedUSD = sushiLocked * swipePrice;
 
     return previousValue + sushiLockedUSD;
   }, 0);
@@ -264,7 +264,7 @@ function UserPage() {
   return (
     <AppShell>
       <Head>
-        <title>User {id} | SushiSwap Analytics</title>
+        <title>User {id} | SwipeSwap Analytics</title>
       </Head>
 
       <PageHeader>
@@ -293,7 +293,7 @@ function UserPage() {
               <Grid item xs={12} sm={6} md={3}>
                 <KPI
                   title="Value"
-                  value={formatCurrency(sushiPrice * barPending)}
+                  value={formatCurrency(swipePrice * barPending)}
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={3}>
@@ -302,7 +302,7 @@ function UserPage() {
 
               <Grid item xs={12} sm={6} md={3}>
                 <KPI
-                  title="xSUSHI"
+                  title="xSXP"
                   value={Number(xSushi.toFixed(2)).toLocaleString()}
                 />
               </Grid>
@@ -479,13 +479,13 @@ function UserPage() {
                       Value
                     </TableCell>
                     <TableCell key="pendingSushi" align="right">
-                      Sushi Pending
+                      Sxp Pending
                     </TableCell>
                     <TableCell key="sushiHarvested" align="right">
-                      Sushi Harvested
+                      Sxp Harvested
                     </TableCell>
                     <TableCell key="sushiLocked" align="right">
-                      Sushi Locked
+                      Sxp Locked
                     </TableCell>
                     <TableCell key="pl" align="right">
                       Profit/Loss
@@ -538,7 +538,7 @@ function UserPage() {
                         sushiAtLockup) *
                       2;
 
-                    const sushiLockedUSD = sushiLocked * sushiPrice;
+                    const sushiLockedUSD = sushiLocked * swipePrice;
                     return (
                       <TableRow key={user.pool.id}>
                         <TableCell component="th" scope="row">
@@ -588,7 +588,7 @@ function UserPage() {
                           <Typography noWrap variant="body2">
                             {decimalFormatter.format(pendingSushi)} (
                             {currencyFormatter.format(
-                              pendingSushi * sushiPrice
+                              pendingSushi * swipePrice
                             )}
                             )
                           </Typography>
@@ -611,7 +611,7 @@ function UserPage() {
                               parseFloat(pair.reserveUSD * share) +
                                 parseFloat(user.exitUSD) +
                                 parseFloat(user.sushiHarvestedUSD) +
-                                parseFloat(pendingSushi * sushiPrice) -
+                                parseFloat(pendingSushi * swipePrice) -
                                 parseFloat(user.entryUSD)
                             )}
                           </Typography>
@@ -637,7 +637,7 @@ export async function getStaticProps({ params }) {
 
   await getEthPrice(client);
 
-  await getSushiToken(client);
+  await getSwipeToken(client);
 
   await getBarUser(id.toLowerCase(), client);
 

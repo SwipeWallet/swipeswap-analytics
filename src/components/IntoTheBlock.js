@@ -10,7 +10,7 @@ function IntoTheBlock({ pairAddress }) {
         apiKey: "IXlsoP7uCH5tjojovmac53V8xlOh8Qa31yOgozMG",
         options: {
           colors: {
-            series: ["#FF1744"],
+            series: ["#ef0000", "#56ae26", "#fd4b2e"],
           },
           protocol: "sushiswap",
           pairAddress,

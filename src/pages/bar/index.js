@@ -12,7 +12,7 @@ import {
   getDayData,
   getEthPrice,
   getFactory,
-  getSushiToken,
+  getSwipeToken,
   tokenQuery,
   useInterval,
 } from "app/core";
@@ -77,7 +77,7 @@ function BarPage() {
     data: { dayDatas },
   } = useQuery(dayDatasQuery);
 
-  const sushiPrice =
+  const swipePrice =
     parseFloat(token?.derivedETH) * parseFloat(bundles[0].ethPrice);
 
   useInterval(async () => {
@@ -86,7 +86,7 @@ function BarPage() {
       getBarHistories,
       getDayData,
       getFactory,
-      getSushiToken,
+      getSwipeToken,
       getEthPrice,
     ]);
   }, 60000);
@@ -128,7 +128,7 @@ function BarPage() {
       const apr =
         (((dayData.volumeUSD * 0.05 * 0.01) / currentValue.xSushiSupply) *
           365) /
-        (currentValue.ratio * sushiPrice);
+        (currentValue.ratio * swipePrice);
       previousValue["apr"].push({
         date,
         value: parseFloat(apr * 100),
@@ -164,14 +164,14 @@ function BarPage() {
 
   const APR =
     (((oneDayVolume * 0.05 * 0.01) / bar.totalSupply) * 365) /
-    (bar.ratio * sushiPrice);
+    (bar.ratio * swipePrice);
 
   const APY = Math.pow(1 + APR / 365, 365) - 1;
 
   return (
     <AppShell>
       <Head>
-        <title>Sushi Bar | SushiSwap Analytics</title>
+        <title>Swipe Bar | SwipeSwap Analytics</title>
       </Head>
 
       <Grid container spacing={3}>
@@ -190,7 +190,7 @@ function BarPage() {
               <KPI title="APY (Avg)" value={averageApy} format="percent" />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-              <KPI title="xSushi" value={bar.totalSupply} format="integer" />
+              <KPI title="xSxp" value={bar.totalSupply} format="integer" />
             </Grid>
             {/* <Grid item xs={12} sm={6} md={3}>
               <KPI
@@ -199,7 +199,7 @@ function BarPage() {
               />
             </Grid> */}
             <Grid item xs={12} sm={6} md={3}>
-              <KPI title="xSushi:Sushi" value={Number(bar.ratio).toFixed(2)} />
+              <KPI title="xSxp:Sxp" value={Number(bar.ratio).toFixed(2)} />
             </Grid>
           </Grid>
         </Grid>

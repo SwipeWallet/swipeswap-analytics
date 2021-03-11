@@ -1,10 +1,10 @@
-# SushiSwap Analytics
+# SwipeSwap Analytics
 
-SushiSwap Analytics is a progressive web application for the SushiSwap Protocol.
+SwipeSwap Analytics is a progressive web application for the SwipeSwap Protocol.
 
 ## Add your logo
 
-Add your logo by opening a PR against sushiswap/assets
+Add your logo by opening a PR against swipeswap/assets
 
 ## Licence
 

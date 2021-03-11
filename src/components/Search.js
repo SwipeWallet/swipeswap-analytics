@@ -70,7 +70,7 @@ export default function Search({ pairs, tokens }) {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Looking for something?"
+          label="Search pairs and tokens"
           variant="outlined"
           size="small"
         />

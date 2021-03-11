@@ -19,7 +19,6 @@ import {
 import React, { useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-import Sushi from "./Sushi";
 import clsx from "clsx";
 import { darkModeVar } from "app/core";
 import useDetect from "../core/hooks/useDetect";
@@ -138,15 +137,16 @@ export default function AppBar({
               alignItems="center"
               justifyContent="space-around"
             >
-              <IconButton edge={false} onClick={() => router.push("/")}>
+              {/* <IconButton edge={false} onClick={() => router.push("/")}>
                 <Sushi />
               </IconButton>
               <Typography variant="subtitle1" color="textPrimary" noWrap>
                 SushiSwap Analytics
-              </Typography>
+              </Typography> */}
+              <img src="/svgs/logo/logo.png" alt="Swipe Analysis" />
             </Box>
           </Hidden>
-          <Typography
+          {/* <Typography
             variant="h6"
             color="textPrimary"
             noWrap
@@ -156,9 +156,9 @@ export default function AppBar({
           </Typography>
           <Typography variant="subtitle1" color="textPrimary" noWrap>
             {page.charAt(0).toUpperCase() + page.slice(1)}
-          </Typography>
+          </Typography> */}
         </div>
-        <Tooltip title="Toggle theme" enterDelay={300}>
+        {/* <Tooltip title="Toggle theme" enterDelay={300}>
           <IconButton
             edge="end"
             onClick={onToggleDarkMode}
@@ -167,7 +167,7 @@ export default function AppBar({
           >
             {!darkMode ? <Brightness4Outlined /> : <Brightness7Outlined />}
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </Toolbar>
     </MuiAppBar>
   );

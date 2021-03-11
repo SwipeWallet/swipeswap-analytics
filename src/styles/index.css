@@ -58,7 +58,7 @@ body {
 .dark-theme
   .MuiOutlinedInput-root.Mui-focused
   .MuiOutlinedInput-notchedOutline {
-  border-color: #b93cf6;
+  border-color: #2e2e2e;
   border-width: 2px;
 }
 
