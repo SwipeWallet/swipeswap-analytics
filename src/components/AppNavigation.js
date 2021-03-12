@@ -165,7 +165,7 @@ export default function AppNavigation() {
           </List>
         </Collapse> */}
 
-        {/* <ListItem button>
+        <ListItem button>
           <ListItemIcon>
             <WavesOutlined />
           </ListItemIcon>
@@ -197,7 +197,7 @@ export default function AppNavigation() {
               <ListItemText primary="All" />
             </ListItem>
           </List>
-        </Collapse> */}
+        </Collapse>
 
         <ListItem
           key="/tokens"
