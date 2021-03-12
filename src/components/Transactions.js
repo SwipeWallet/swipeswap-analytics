@@ -74,9 +74,9 @@ export default function Transactions({ transactions, txCount }) {
             render: (row) => (
               <Typography variant="body2" noWrap>
                 {decimalFormatter.format(row.amount0)}{" "}
-                {row.amount1In === "0"
-                  ? row.pair.token0.symbol
-                  : row.pair.token1.symbol}
+                {row.amount0In === "0"
+                  ? row.pair.token1.symbol
+                  : row.pair.token0.symbol}
               </Typography>
             ),
           },
@@ -87,9 +87,9 @@ export default function Transactions({ transactions, txCount }) {
             render: (row) => (
               <Typography variant="body2" noWrap>
                 {decimalFormatter.format(row.amount1)}{" "}
-                {row.amount0Out === "0"
-                  ? row.pair.token1.symbol
-                  : row.pair.token0.symbol}
+                {row.amount1Out === "0"
+                  ? row.pair.token0.symbol
+                  : row.pair.token1.symbol}
               </Typography>
             ),
           },
