@@ -230,7 +230,7 @@ export async function getPools(client = getApollo()) {
             rewardPerThousand: 1 * roiPerDay * (1000 / swipePrice),
             tvl:
               (pair.reserveUSD / pair.totalSupply) *
-              liquidityPosition.liquidityTokenBalance,
+              (liquidityPosition?.liquidityTokenBalance || 0),
           };
         }),
     },
