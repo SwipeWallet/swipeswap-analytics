@@ -155,7 +155,7 @@ export async function getPools(client = getApollo()) {
   const ethPrice = bundles[0].ethPrice;
 
   const { token } = await getToken(
-    "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2"
+    "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9"
   );
 
   const swipePrice = ethPrice * token.derivedETH;
@@ -165,7 +165,7 @@ export async function getPools(client = getApollo()) {
     data: { liquidityPositions },
   } = await client.query({
     query: liquidityPositionSubsetQuery,
-    variables: { user: "0xc2edad668740f1aa35e4d8f227fb8e17dca888cd" },
+    variables: { user: "0x252dD6a11Ef272A438A36d1A2370eEd820099547" },
   });
 
   await client.cache.writeQuery({
@@ -176,7 +176,7 @@ export async function getPools(client = getApollo()) {
           (pool) =>
             !POOL_DENY.includes(pool.id) &&
             pool.allocPoint !== "0" &&
-            pool.accSushiPerShare !== "0" &&
+            pool.accSwipePerShare !== "0" &&
             pairs.find((pair) => pair?.id === pool.pair)
         )
         .map((pool) => {
@@ -205,7 +205,7 @@ export async function getPools(client = getApollo()) {
 
           const rewardPerBlock =	
             ((pool.allocPoint / pool.owner.totalAllocPoint) *	
-              pool.owner.sushiPerBlock) /	
+              pool.owner.swipePerBlock) /	
             1e18;
 
 
