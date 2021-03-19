@@ -46,8 +46,8 @@
     "analyze": "ANALYZE=true yarn build",
     "analyze-serve": "serve .next/analyze -p 3002",
     "dev": "next -p 3001",
-    "build": "next build",
-    "start": "next start"
+    "build": "next build & next export",
+    "start": "next start -p 5001"
   },
   "husky": {
     "hooks": {
