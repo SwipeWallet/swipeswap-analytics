@@ -29,14 +29,14 @@ function RecentPairsPage() {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const client = getApollo();
   await getPairs(client);
   return {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 

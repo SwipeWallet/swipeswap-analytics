@@ -24,14 +24,14 @@ function GainersPage() {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const client = getApollo();
   await getGainers(client);
   return {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 

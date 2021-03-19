@@ -439,7 +439,7 @@ function PoolPage() {
   );
 }
 
-export async function getStaticProps({ params: { id } }) {
+export async function getServerSideProps({ params: { id } }) {
   const client = getApollo();
   await getEthPrice(client);
   await getSwipeToken(client);
@@ -449,17 +449,17 @@ export async function getStaticProps({ params: { id } }) {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 
-export async function getStaticPaths() {
-  // const client = getApollo();
-  // const { pools } = await getPoolIds(client);
-  // const paths = pools.map((pool) => ({
-  //   params: { id: pool.id },
-  // }));
-  return { paths: [], fallback: true };
-}
+// export async function getStaticPaths() {
+//   // const client = getApollo();
+//   // const { pools } = await getPoolIds(client);
+//   // const paths = pools.map((pool) => ({
+//   //   params: { id: pool.id },
+//   // }));
+//   return { paths: [], fallback: true };
+// }
 
 export default PoolPage;

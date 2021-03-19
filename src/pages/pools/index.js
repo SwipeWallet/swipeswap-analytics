@@ -31,14 +31,14 @@ function PoolsPage() {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const client = getApollo();
   await getPools(client);
   return {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 

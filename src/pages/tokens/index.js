@@ -31,7 +31,7 @@ function TokensPage() {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const client = getApollo();
 
   await client.query({
@@ -46,7 +46,7 @@ export async function getStaticProps() {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 

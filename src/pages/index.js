@@ -162,7 +162,7 @@ function IndexPage() {
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const client = getApollo();
 
   await getDayData(client);
@@ -183,7 +183,7 @@ export async function getStaticProps() {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 

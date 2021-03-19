@@ -630,7 +630,7 @@ function UserPage() {
   );
 }
 
-export async function getStaticProps({ params }) {
+export async function getServerSideProps({ params }) {
   const client = getApollo();
 
   const id = params.id.toLowerCase();
@@ -661,15 +661,15 @@ export async function getStaticProps({ params }) {
     props: {
       initialApolloState: client.cache.extract(),
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 }
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: true,
-  };
-}
+// export async function getStaticPaths() {
+//   return {
+//     paths: [],
+//     fallback: true,
+//   };
+// }
 
 export default UserPage;
