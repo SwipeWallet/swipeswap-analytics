@@ -100,7 +100,7 @@ function IndexPage() {
         <Grid item xs={12} sm={12} md={6}>
           <Paper
             // variant="outlined"
-            boxShadow={10}
+            boxshadow={10}
             style={{ height: 300 }}
           >
             <ParentSize>
@@ -121,7 +121,7 @@ function IndexPage() {
         <Grid item xs={12} sm={12} md={6}>
           <Paper
             // variant="outlined"
-            boxShadow={10}
+            boxshadow={10}
             style={{ height: 300, position: "relative" }}
           >
             <ParentSize>

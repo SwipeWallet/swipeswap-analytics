@@ -155,7 +155,7 @@ export async function getPools(client = getApollo()) {
   const ethPrice = bundles[0].ethPrice;
 
   const { token } = await getToken(
-    "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9"
+    "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"
   );
 
   const swipePrice = ethPrice * token.derivedETH;
@@ -165,7 +165,7 @@ export async function getPools(client = getApollo()) {
     data: { liquidityPositions },
   } = await client.query({
     query: liquidityPositionSubsetQuery,
-    variables: { user: "0x252dD6a11Ef272A438A36d1A2370eEd820099547" },
+    variables: { user: "0x252dd6a11ef272a438a36d1a2370eed820099547" },
   });
 
   await client.cache.writeQuery({
@@ -189,9 +189,8 @@ export async function getPools(client = getApollo()) {
           const balance = Number(pool.balance / 1e18);
 
           const blocksPerHour = 3600 / averageBlockTime;
-
           // const rewardPerBlock =
-          //   100 - 100 * (pool45.allocPoint / pool45.owner.totalAllocPoint);
+          //   100 - 100 * (pool.allocPoint / pool.owner.totalAllocPoint);
 
           // const roiPerBlock =
           //   (Number(token.derivedETH) *
@@ -209,7 +208,7 @@ export async function getPools(client = getApollo()) {
             1e18;
 
 
-          const roiPerBlock = ((rewardPerBlock * 3) * swipePrice) / balanceUSD;
+          const roiPerBlock = ((rewardPerBlock * 2) * swipePrice) / balanceUSD;
 
           const roiPerHour = roiPerBlock * blocksPerHour;
 

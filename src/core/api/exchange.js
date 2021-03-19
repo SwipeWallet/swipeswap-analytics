@@ -57,7 +57,7 @@ export async function getFactory(client = getApollo()) {
 }
 
 export async function getSwipeToken(client = getApollo()) {
-  return await getToken("0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9", client);
+  return await getToken("0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9", client);
 }
 
 export async function getDayData(client = getApollo()) {
