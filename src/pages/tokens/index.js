@@ -1,53 +1,56 @@
 import { AppShell, TokenTable } from "app/components";
 import {
-  ethPriceQuery,
   getApollo,
+  getEthPrice,
   getOneDayEthPrice,
+  getSevenDayEthPrice,
   getTokens,
-  tokensQuery,
-  useInterval,
+  useProps,
 } from "app/core";
 
 import Head from "next/head";
 import React from "react";
-import { useQuery } from "@apollo/client";
 
-function TokensPage() {
-  const {
-    data: { tokens },
-  } = useQuery(tokensQuery);
-
-  useInterval(async () => {
-    await Promise.all([getTokens, getOneDayEthPrice]);
-  }, 60000);
+function TokensPage(props) {
+  const [{
+    bundles,
+    oneDayEthPriceData,
+    sevenDayEthPriceData,
+    tokens,
+  }] = useProps(props, fetchProps);
 
   return (
     <AppShell>
       <Head>
         <title>Tokens | SwipeSwap Analytics</title>
       </Head>
-      <TokenTable title="Tokens" tokens={tokens} />
+      <TokenTable title="Tokens" {...{ tokens, bundles, oneDayEthPriceData, sevenDayEthPriceData }} />
     </AppShell>
   );
 }
 
-export async function getServerSideProps() {
+async function fetchProps(callback) {
   const client = getApollo();
 
-  await client.query({
-    query: ethPriceQuery,
-  });
+  const { bundles } = await getEthPrice(client);
+  const oneDayEthPriceData = await getOneDayEthPrice(client);
+  const sevenDayEthPriceData = await getSevenDayEthPrice(client);
+  const { tokens } = await getTokens(client);
 
-  await getOneDayEthPrice(client);
+  const props = {
+    bundles,
+    oneDayEthPriceData,
+    sevenDayEthPriceData,
+    tokens,
+  }
 
-  await getTokens(client);
+  if (callback) callback(props);
+  else return props;
+}
 
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+TokensPage.getInitialProps = async function() {
+  const props = await fetchProps();
+  return props;
 }
 
 export default TokensPage;

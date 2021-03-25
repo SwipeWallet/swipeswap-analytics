@@ -355,6 +355,7 @@ const Curves = ({
               : "url(#marker-arrow-odd)";
             return (
               <Curve
+                key={`curve-${i}`}
                 curve={curveNatural}
                 stroke={colors[i]}
                 strokeWidth={2}

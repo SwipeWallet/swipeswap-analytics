@@ -14,26 +14,19 @@ import {
 import { Box, Grid, Paper, Typography } from "@material-ui/core";
 import {
   currencyFormatter,
-  ethPriceQuery,
   getApollo,
-  getOneDayBlock,
+  getEthPrice,
   getOneDayEthPrice,
   getToken,
   getTokenPairs,
-  oneDayEthPriceQuery,
-  sevenDayEthPriceQuery,
-  tokenDayDatasQuery,
-  tokenIdsQuery,
-  tokenPairsQuery,
-  tokenQuery,
-  transactionsQuery,
-  useInterval,
+  getTokenDayDatas,
+  getTransactions,
+  useProps,
 } from "app/core";
 
 import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
 import { makeStyles } from "@material-ui/core/styles";
-import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
@@ -69,59 +62,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function TokenPage() {
+function TokenPage(props) {
   const router = useRouter();
+  const id = router.query.id.toLowerCase();
+  const [{
+    bundles,
+    oneDayEthPriceData,
+    tokenDayDatas,
+    token,
+    pairs,
+    transactions,
+  }] = useProps(props, (props) => fetchProps(props, id));
 
   if (router.isFallback) {
     return <AppShell />;
   }
 
   const classes = useStyles();
-
-  const id = router.query.id.toLowerCase();
-
-  const {
-    data: { token },
-  } = useQuery(tokenQuery, {
-    variables: { id },
-  });
-
-  const {
-    data: { bundles },
-  } = useQuery(ethPriceQuery, {
-    pollInterval: 60000,
-  });
-
-  const { data: oneDayEthPriceData } = useQuery(oneDayEthPriceQuery);
-
-  useInterval(async () => {
-    await getToken(id);
-    await getOneDayEthPrice();
-  }, 60000);
-
-  const {
-    data: { tokenDayDatas },
-  } = useQuery(tokenDayDatasQuery, {
-    variables: {
-      tokens: [id],
-    },
-    pollInterval: 60000,
-  });
-
-  const {
-    data: { pairs0, pairs1 },
-  } = useQuery(tokenPairsQuery, {
-    variables: { id },
-  });
-
-  const pairs = [...pairs0, ...pairs1];
-
-  const { data: transactions } = useQuery(transactionsQuery, {
-    variables: {
-      pairAddresses: pairs.map((pair) => pair.id).sort(),
-    },
-    pollInterval: 60000,
-  });
 
   const chartDatas = tokenDayDatas.reduce(
     (previousValue, currentValue) => {
@@ -159,9 +116,6 @@ function TokenPage() {
   const volume = token?.volumeUSD - token?.oneDay?.volumeUSD;
   const volumeYesterday = token?.oneDay?.volumeUSD - token?.twoDay?.volumeUSD;
 
-  const txCount = token?.txCount - token?.oneDay?.txCount;
-  const txCountYesterday = token?.oneDay?.txCount - token?.twoDay?.txCount;
-
   const fees = volume * 0.003;
   const feesYesterday = volumeYesterday * 0.003;
 
@@ -196,14 +150,14 @@ function TokenPage() {
           </Grid>
           <Grid item xs={12} sm="auto" className={classes.links}>
             <Link
-              href={`https://app.swipe.org/add-liquidity?inputCurrency=${token.id}`}
+              href={`https://swap.swipe.org/add-liquidity?inputCurrency=${token.id}`}
               target="_blank"
               variant="body1"
             >
               Add Liquidity
             </Link>
             <Link
-              href={`https://app.swipe.org/swap?inputCurrency=${token.id}`}
+              href={`https://swap.swipe.org/swap?inputCurrency=${token.id}`}
               target="_blank"
               variant="body1"
             >
@@ -307,62 +261,35 @@ function TokenPage() {
   );
 }
 
-export async function getServerSideProps({ params }) {
+async function fetchProps(callback, id) {
   const client = getApollo();
 
-  const id = params.id.toLowerCase();
-
-  await client.query({
-    query: ethPriceQuery,
-  });
-
-  await getToken(id, client);
-
-  await client.query({
-    query: tokenDayDatasQuery,
-    variables: {
-      tokens: [id],
-    },
-  });
-
+  const { bundles } = await getEthPrice(client);
+  const oneDayEthPriceData = await getOneDayEthPrice(client);
+  const { token } = await getToken(id, client);
+  const tokenDayDatas = await getTokenDayDatas(id, client);
   const { pairs0, pairs1 } = await getTokenPairs(id, client);
+  const pairs = [...pairs0, ...pairs1];
+  const pairAddresses = pairs.map((pair) => pair.id).sort();
+  const transactions = await getTransactions(pairAddresses, client);
 
-  const pairAddresses = [
-    ...pairs0.map((pair) => pair.id),
-    ...pairs1.map((pair) => pair.id),
-  ].sort();
+  const props = {
+    bundles,
+    oneDayEthPriceData,
+    tokenDayDatas,
+    token,
+    pairs,
+    transactions,
+  }
 
-  // Transactions
-  await client.query({
-    query: transactionsQuery,
-    variables: {
-      pairAddresses,
-    },
-  });
-
-  await getOneDayEthPrice(client);
-
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+  if (callback) callback(props);
+  else return props;
 }
 
-// export async function getStaticPaths() {
-//   // Call an external API endpoint to get posts
-//   // const apollo = getApollo();
-
-//   // const { data } = await apollo.query({
-//   //   query: tokenIdsQuery,
-//   // });
-
-//   // const paths = data.tokens.map(({ id }) => ({
-//   //   params: { id },
-//   // }));
-
-//   return { paths: [], fallback: true };
-// }
+TokenPage.getInitialProps = async function (ctx) {
+  const id = ctx.query ? ctx.query.id : ctx.req.url.replace('/tokens/', '');
+  const props = await fetchProps(null, id);
+  return props;
+}
 
 export default TokenPage;

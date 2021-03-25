@@ -3,36 +3,18 @@ import Autocomplete, {
 } from "@material-ui/lab/Autocomplete";
 import { Box, TextField } from "@material-ui/core";
 /* eslint-disable no-use-before-define */
-import React, { useState } from "react";
-import { pairsQuery, tokensQuery } from "../core";
+import React from "react";
 
 import PairIcon from "./PairIcon";
 import { TokenIcon } from "app/components";
-import Typography from "@material-ui/core/Typography";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
-import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 
 export default function Search({ pairs, tokens }) {
   const router = useRouter();
-  // const {
-  //   data: { pairs },
-  //   loading: pairsLoading,
-  // } = useQuery(pairsQuery);
-
-  // const {
-  //   data: { tokens },
-  //   loading: tokensLoading,
-  // } = useQuery(tokensQuery);
-
-  // const [offset, setOffset] = useState(0);
-
-  // const [limit, setLimit] = useState(200);
 
   const options = [
-    // ...pairs.slice(offset, limit),
-    // ...tokens.slice(offset, limit),
     ...pairs,
     ...tokens,
   ].map((option) => {

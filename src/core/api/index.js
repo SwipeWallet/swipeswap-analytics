@@ -5,13 +5,14 @@ import {
   getOneDayBlock,
   getSevenDayBlock,
   getTwoDayBlock,
-  oneDayEthPriceQuery,
   pairQuery,
   pairTimeTravelQuery,
   pairsQuery,
   pairsTimeTravelQuery,
-  sevenDayEthPriceQuery,
   tokenPairsQuery,
+  pairDayDatasQuery,
+  tokenDayDatasQuery,
+  transactionsQuery,
 } from "app/core";
 
 export * from "./bar";
@@ -46,14 +47,7 @@ export async function getEthPrice(client = getApollo()) {
     query: ethPriceQuery,
   });
 
-  await client.cache.writeQuery({
-    query: ethPriceQuery,
-    data,
-  });
-
-  return await client.cache.readQuery({
-    query: ethPriceQuery,
-  });
+  return data;
 }
 
 export async function getOneDayEthPrice(client = getApollo()) {
@@ -69,12 +63,7 @@ export async function getOneDayEthPrice(client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  await client.cache.writeQuery({
-    query: oneDayEthPriceQuery,
-    data: {
-      ethPrice: bundles[0]?.ethPrice,
-    },
-  });
+  return bundles;
 }
 
 export async function getSevenDayEthPrice(client = getApollo()) {
@@ -90,12 +79,7 @@ export async function getSevenDayEthPrice(client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  await client.cache.writeQuery({
-    query: sevenDayEthPriceQuery,
-    data: {
-      ethPrice: bundles[0]?.ethPrice,
-    },
-  });
+  return bundles;
 }
 
 // Pairs
@@ -135,38 +119,23 @@ export async function getPair(id, client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  // console.log({ oneDayPair, twoDayPair });
-
-  await client.cache.writeQuery({
-    query: pairQuery,
-    variables: {
-      id,
-    },
-    data: {
-      pair: {
-        ...pair,
-        oneDay: {
-          untrackedVolumeUSD: Number(oneDayPair?.untrackedVolumeUSD),
-          volumeUSD: Number(oneDayPair?.volumeUSD),
-          reserveUSD: Number(oneDayPair?.reserveUSD),
-          txCount: Number(oneDayPair?.txCount),
-        },
-        twoDay: {
-          untrackedVolumeUSD: Number(twoDayPair?.untrackedVolumeUSD),
-          volumeUSD: Number(twoDayPair?.volumeUSD),
-          reserveUSD: Number(twoDayPair?.reserveUSD),
-          txCount: Number(twoDayPair?.txCount),
-        },
+  return {
+    pair: {
+      ...pair,
+      oneDay: {
+        untrackedVolumeUSD: Number(oneDayPair?.untrackedVolumeUSD),
+        volumeUSD: Number(oneDayPair?.volumeUSD),
+        reserveUSD: Number(oneDayPair?.reserveUSD),
+        txCount: Number(oneDayPair?.txCount),
+      },
+      twoDay: {
+        untrackedVolumeUSD: Number(twoDayPair?.untrackedVolumeUSD),
+        volumeUSD: Number(twoDayPair?.volumeUSD),
+        reserveUSD: Number(twoDayPair?.reserveUSD),
+        txCount: Number(twoDayPair?.txCount),
       },
     },
-  });
-
-  return await client.cache.readQuery({
-    query: pairQuery,
-    variables: {
-      id,
-    },
-  });
+  };
 }
 
 export async function getPairs(client = getApollo()) {
@@ -204,34 +173,27 @@ export async function getPairs(client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  await client.cache.writeQuery({
-    query: pairsQuery,
-    data: {
-      pairs: pairs.map((pair) => {
-        const oneDayPair = oneDayPairs.find(({ id }) => pair.id === id);
-        const sevenDayPair = sevenDayPairs.find(({ id }) => pair.id === id);
-        return {
-          ...pair,
-          oneDay: {
-            untrackedVolumeUSD: String(oneDayPair?.untrackedVolumeUSD),
-            volumeUSD: String(oneDayPair?.volumeUSD),
-            reserveUSD: String(oneDayPair?.reserveUSD),
-            txCount: String(oneDayPair?.txCount),
-          },
-          sevenDay: {
-            untrackedVolumeUSD: String(sevenDayPair?.untrackedVolumeUSD),
-            volumeUSD: String(sevenDayPair?.volumeUSD),
-            reserveUSD: String(sevenDayPair?.reserveUSD),
-            txCount: String(oneDayPair?.txCount),
-          },
-        };
-      }),
-    },
-  });
-
-  return await client.cache.readQuery({
-    query: pairsQuery,
-  });
+  return {
+    pairs: pairs.map((pair) => {
+      const oneDayPair = oneDayPairs.find(({ id }) => pair.id === id);
+      const sevenDayPair = sevenDayPairs.find(({ id }) => pair.id === id);
+      return {
+        ...pair,
+        oneDay: {
+          untrackedVolumeUSD: String(oneDayPair?.untrackedVolumeUSD),
+          volumeUSD: String(oneDayPair?.volumeUSD),
+          reserveUSD: String(oneDayPair?.reserveUSD),
+          txCount: String(oneDayPair?.txCount),
+        },
+        sevenDay: {
+          untrackedVolumeUSD: String(sevenDayPair?.untrackedVolumeUSD),
+          volumeUSD: String(sevenDayPair?.volumeUSD),
+          reserveUSD: String(sevenDayPair?.reserveUSD),
+          txCount: String(oneDayPair?.txCount),
+        },
+      };
+    }),
+  };
 }
 
 export async function getTokenPairs(id, client = getApollo()) {
@@ -273,45 +235,66 @@ export async function getTokenPairs(id, client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  await client.cache.writeQuery({
-    query: tokenPairsQuery,
-    variables: { id },
-    data: {
-      pairs0: pairs0.map((pair) => {
-        const oneDayPair = oneDayPairs.find(({ id }) => pair.id === id);
-        const sevenDayPair = sevenDayPairs.find(({ id }) => pair.id === id);
-        return {
-          ...pair,
-          oneDay: {
-            volumeUSD: String(oneDayPair?.volumeUSD),
-            reserveUSD: String(oneDayPair?.reserveUSD),
-          },
-          sevenDay: {
-            volumeUSD: String(sevenDayPair?.volumeUSD),
-            reserveUSD: String(sevenDayPair?.reserveUSD),
-          },
-        };
-      }),
-      pairs1: pairs1.map((pair) => {
-        const oneDayPair = oneDayPairs.find(({ id }) => pair.id === id);
-        const sevenDayPair = sevenDayPairs.find(({ id }) => pair.id === id);
-        return {
-          ...pair,
-          oneDay: {
-            volumeUSD: String(oneDayPair?.volumeUSD),
-            reserveUSD: String(oneDayPair?.reserveUSD),
-          },
-          sevenDay: {
-            volumeUSD: String(sevenDayPair?.volumeUSD),
-            reserveUSD: String(sevenDayPair?.reserveUSD),
-          },
-        };
-      }),
+  return {
+    pairs0: pairs0.map((pair) => {
+      const oneDayPair = oneDayPairs.find(({ id }) => pair.id === id);
+      const sevenDayPair = sevenDayPairs.find(({ id }) => pair.id === id);
+      return {
+        ...pair,
+        oneDay: {
+          volumeUSD: String(oneDayPair?.volumeUSD),
+          reserveUSD: String(oneDayPair?.reserveUSD),
+        },
+        sevenDay: {
+          volumeUSD: String(sevenDayPair?.volumeUSD),
+          reserveUSD: String(sevenDayPair?.reserveUSD),
+        },
+      };
+    }),
+    pairs1: pairs1.map((pair) => {
+      const oneDayPair = oneDayPairs.find(({ id }) => pair.id === id);
+      const sevenDayPair = sevenDayPairs.find(({ id }) => pair.id === id);
+      return {
+        ...pair,
+        oneDay: {
+          volumeUSD: String(oneDayPair?.volumeUSD),
+          reserveUSD: String(oneDayPair?.reserveUSD),
+        },
+        sevenDay: {
+          volumeUSD: String(sevenDayPair?.volumeUSD),
+          reserveUSD: String(sevenDayPair?.reserveUSD),
+        },
+      };
+    }),
+  };
+}
+
+export async function getPairDayDatas(id, client = getApollo()) {
+  const { data: { pairDayDatas } } = await client.query({
+    query: pairDayDatasQuery,
+    variables: {
+      pairs: [id],
     },
   });
+  return pairDayDatas;
+}
 
-  return await client.cache.readQuery({
-    query: tokenPairsQuery,
-    variables: { id },
+export async function getTokenDayDatas(id, client = getApollo()) {
+  const { data: { tokenDayDatas } } = await client.query({
+    query: tokenDayDatasQuery,
+    variables: {
+      tokens: [id],
+    },
   });
+  return tokenDayDatas;
+}
+
+export async function getTransactions(pairAddresses, client = getApollo()) {
+  const { data } = await client.query({
+    query: transactionsQuery,
+    variables: {
+      pairAddresses,
+    },
+  });
+  return data;
 }

@@ -8,9 +8,8 @@ import {
   TokenTable,
 } from "app/components";
 import { Box, Grid, Paper, Typography } from "@material-ui/core";
-import React, { useState } from "react";
+import React from "react";
 import {
-  dayDatasQuery,
   getApollo,
   getDayData,
   getEthPrice,
@@ -19,49 +18,22 @@ import {
   getPools,
   getSevenDayEthPrice,
   getTokens,
-  pairsQuery,
-  poolsQuery,
-  tokensQuery,
-  useInterval,
+  useProps,
 } from "app/core";
 
 import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
-import { useQuery } from "@apollo/client";
 
-function IndexPage() {
-  const {
-    data: { tokens },
-  } = useQuery(tokensQuery);
-
-  const {
-    data: { pairs },
-  } = useQuery(pairsQuery);
-
-  const {
-    data: { pools },
-  } = useQuery(poolsQuery, {
-    context: {
-      clientName: "masterchef",
-    },
-  });
-
-  const {
-    data: { dayDatas },
-  } = useQuery(dayDatasQuery);
-
-  useInterval(
-    () =>
-      Promise.all([
-        getPairs,
-        getPools,
-        getTokens,
-        getDayData,
-        getOneDayEthPrice,
-        getSevenDayEthPrice,
-      ]),
-    60000
-  );
+function IndexPage(props) {
+  const [{
+    dayDatas,
+    bundles,
+    oneDayEthPriceData,
+    sevenDayEthPriceData,
+    tokens,
+    pairs,
+    pools
+  }] = useProps(props, fetchProps);
 
   const [liquidity, volume] = dayDatas
     .filter((d) => d.liquidityUSD !== "0")
@@ -141,7 +113,7 @@ function IndexPage() {
         </Grid>
 
         <Grid item xs={12}>
-          <TokenTable title="Top Tokens" tokens={tokens} />
+          <TokenTable title="Top Tokens" {...{ tokens, bundles, oneDayEthPriceData, sevenDayEthPriceData }} />
         </Grid>
 
         <Grid item xs={12}>
@@ -162,29 +134,34 @@ function IndexPage() {
   );
 }
 
-export async function getServerSideProps() {
+async function fetchProps(callback) {
   const client = getApollo();
 
-  await getDayData(client);
+  const { dayDatas } = await getDayData(client);
+  const { bundles } = await getEthPrice(client);
+  const oneDayEthPriceData = await getOneDayEthPrice(client);
+  const sevenDayEthPriceData = await getSevenDayEthPrice(client);
+  const { tokens } = await getTokens(client);
+  const { pairs } = await getPairs(client);
+  const { pools } = await getPools(client);
 
-  await getEthPrice(client);
+  const props = {
+    dayDatas,
+    bundles,
+    oneDayEthPriceData,
+    sevenDayEthPriceData,
+    tokens,
+    pairs,
+    pools,
+  }
 
-  await getOneDayEthPrice(client);
+  if (callback) callback(props);
+  else return props;
+}
 
-  await getSevenDayEthPrice(client);
-
-  await getTokens(client);
-
-  await getPairs(client);
-
-  await getPools(client);
-
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+IndexPage.getInitialProps = async function() {
+  const props = await fetchProps();
+  return props;
 }
 
 export default IndexPage;

@@ -16,7 +16,6 @@
 
 .MuiListItem-root.Mui-selected .MuiListItemText-root,
 .MuiListItem-root:hover .MuiListItemText-root {
-  flex: unset;
   position: relative;
 }
 

@@ -40,20 +40,13 @@ export async function getFactory(client = getApollo()) {
     },
   });
 
-  await client.cache.writeQuery({
-    query: factoryQuery,
-    data: {
-      factory: {
-        ...factory,
-        oneDay,
-        twoDay,
-      },
+  return {
+    factory: {
+      ...factory,
+      oneDay,
+      twoDay,
     },
-  });
-
-  return await client.cache.readQuery({
-    query: factoryQuery,
-  });
+  };
 }
 
 export async function getSwipeToken(client = getApollo()) {
@@ -64,15 +57,7 @@ export async function getDayData(client = getApollo()) {
   const { data } = await client.query({
     query: dayDatasQuery,
   });
-
-  await client.cache.writeQuery({
-    query: dayDatasQuery,
-    data,
-  });
-
-  return await client.cache.readQuery({
-    query: dayDatasQuery,
-  });
+  return data;
 }
 
 // Tokens
@@ -110,34 +95,23 @@ export async function getToken(id, client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  await client.cache.writeQuery({
-    query: tokenQuery,
-    variables: {
-      id,
-    },
-    data: {
-      token: {
-        ...token,
-        oneDay: {
-          volumeUSD: String(oneDayToken?.volumeUSD),
-          derivedETH: String(oneDayToken?.derivedETH),
-          liquidity: String(oneDayToken?.liquidity),
-          txCount: String(oneDayToken?.txCount),
-        },
-        twoDay: {
-          volumeUSD: String(twoDayToken?.volumeUSD),
-          derivedETH: String(twoDayToken?.derivedETH),
-          liquidity: String(twoDayToken?.liquidity),
-          txCount: String(twoDayToken?.txCount),
-        },
+  return {
+    token: {
+      ...token,
+      oneDay: {
+        volumeUSD: String(oneDayToken?.volumeUSD),
+        derivedETH: String(oneDayToken?.derivedETH),
+        liquidity: String(oneDayToken?.liquidity),
+        txCount: String(oneDayToken?.txCount),
+      },
+      twoDay: {
+        volumeUSD: String(twoDayToken?.volumeUSD),
+        derivedETH: String(twoDayToken?.derivedETH),
+        liquidity: String(twoDayToken?.liquidity),
+        txCount: String(twoDayToken?.txCount),
       },
     },
-  });
-
-  return await client.cache.readQuery({
-    query: tokenQuery,
-    variables: { id },
-  });
+  };
 }
 
 export async function getTokens(client = getApollo()) {
@@ -169,30 +143,23 @@ export async function getTokens(client = getApollo()) {
     fetchPolicy: "no-cache",
   });
 
-  await client.writeQuery({
-    query: tokensQuery,
-    data: {
-      tokens: tokens.map((token) => {
-        const oneDayToken = oneDayTokens.find(({ id }) => token.id === id);
-        const sevenDayToken = sevenDayTokens.find(({ id }) => token.id === id);
-        return {
-          ...token,
-          oneDay: {
-            volumeUSD: String(oneDayToken?.volumeUSD),
-            derivedETH: String(oneDayToken?.derivedETH),
-            liquidity: String(oneDayToken?.liquidity),
-          },
-          sevenDay: {
-            volumeUSD: String(sevenDayToken?.volumeUSD),
-            derivedETH: String(sevenDayToken?.derivedETH),
-            liquidity: String(sevenDayToken?.liquidity),
-          },
-        };
-      }),
-    },
-  });
-
-  return await client.cache.readQuery({
-    query: tokensQuery,
-  });
+  return {
+    tokens: tokens.map((token) => {
+      const oneDayToken = oneDayTokens.find(({ id }) => token.id === id);
+      const sevenDayToken = sevenDayTokens.find(({ id }) => token.id === id);
+      return {
+        ...token,
+        oneDay: {
+          volumeUSD: String(oneDayToken?.volumeUSD),
+          derivedETH: String(oneDayToken?.derivedETH),
+          liquidity: String(oneDayToken?.liquidity),
+        },
+        sevenDay: {
+          volumeUSD: String(sevenDayToken?.volumeUSD),
+          derivedETH: String(sevenDayToken?.derivedETH),
+          liquidity: String(sevenDayToken?.liquidity),
+        },
+      };
+    }),
+  };
 }

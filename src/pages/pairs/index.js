@@ -1,15 +1,13 @@
-import { AppShell, PairTable, SortableTable } from "app/components";
-import { getApollo, getPairs, pairsQuery, useInterval } from "app/core";
+import { AppShell, PairTable } from "app/components";
+import { getApollo, getPairs, useProps } from "app/core";
 
 import Head from "next/head";
 import React from "react";
-import { useQuery } from "@apollo/client";
 
-function PairsPage() {
-  const {
-    data: { pairs },
-  } = useQuery(pairsQuery);
-  useInterval(getPairs, 60000);
+function PairsPage(props) {
+  const [{
+    pairs,
+  }] = useProps(props, fetchProps);
   return (
     <AppShell>
       <Head>
@@ -20,18 +18,22 @@ function PairsPage() {
   );
 }
 
-export async function getServerSideProps() {
+async function fetchProps(callback) {
   const client = getApollo();
 
-  // Pairs
-  await getPairs(client);
+  const { pairs } = await getPairs(client);
 
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+  const props = {
+    pairs,
+  }
+
+  if (callback) callback(props);
+  else return props;
+}
+
+PairsPage.getInitialProps = async function() {
+  const props = await fetchProps();
+  return props;
 }
 
 export default PairsPage;

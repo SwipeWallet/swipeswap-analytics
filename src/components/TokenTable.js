@@ -1,10 +1,5 @@
 import { Box, Typography } from "@material-ui/core";
 import { Sparklines, SparklinesLine } from "react-sparklines";
-import {
-  ethPriceQuery,
-  oneDayEthPriceQuery,
-  sevenDayEthPriceQuery,
-} from "app/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import Link from "./Link";
@@ -14,24 +9,14 @@ import SortableTable from "./SortableTable";
 import { TOKEN_DENY } from "app/core/constants";
 import TokenIcon from "./TokenIcon";
 import { currencyFormatter } from "app/core";
-import { useQuery } from "@apollo/client";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
 }));
 
-export default function TokenTable({ tokens, title }) {
+export default function TokenTable({ tokens, title, bundles, oneDayEthPriceData, sevenDayEthPriceData }) {
   const classes = useStyles();
   const theme = useTheme();
-  const {
-    data: { bundles },
-  } = useQuery(ethPriceQuery, {
-    pollInterval: 60000,
-  });
-
-  const { data: oneDayEthPriceData } = useQuery(oneDayEthPriceQuery);
-
-  const { data: sevenDayEthPriceData } = useQuery(sevenDayEthPriceQuery);
 
   const rows = tokens
     .filter(({ id }) => {
@@ -144,8 +129,8 @@ export default function TokenTable({ tokens, title }) {
                       row.sevenDayPriceChange > 0
                         ? theme.palette.positive.main
                         : row.sevenDayPriceChange < 0
-                        ? theme.palette.negative.main
-                        : "currentColor",
+                          ? theme.palette.negative.main
+                          : "currentColor",
                     fill: "none",
                   }}
                 />

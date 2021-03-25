@@ -3,36 +3,29 @@ import {
   AreaChart,
   BarChart,
   BasicTable,
-  Chart,
-  // IntoTheBlock,
   KPI,
   Link,
   PageHeader,
   PairIcon,
-  Percent,
   TokenIcon,
   Transactions,
 } from "app/components";
-import { Avatar, Box, Chip, Grid, Paper, Typography } from "@material-ui/core";
+import { Box, Grid, Paper, Typography } from "@material-ui/core";
 import {
-  ethPriceQuery,
   formatCurrency,
   formatDecimal,
   getApollo,
+  getEthPrice,
   getPair,
-  pairDayDatasQuery,
-  pairIdsQuery,
-  pairQuery,
-  transactionsQuery,
-  useInterval,
+  getPairDayDatas,
+  getTransactions,
+  useProps,
 } from "app/core";
 
 import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { toChecksumAddress } from "web3-utils";
-import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
@@ -72,45 +65,19 @@ const useStyles = makeStyles((theme) => ({
 
 function PairPage(props) {
   const router = useRouter();
+  const id = router.query.id.toLowerCase();
+  const [{
+    bundles,
+    pair,
+    pairDayDatas,
+    transactions,
+  }] = useProps(props, (props) => fetchProps(props, id));
 
   if (router.isFallback) {
     return <AppShell />;
   }
 
   const classes = useStyles();
-
-  const id = router.query.id.toLowerCase();
-
-  const {
-    data: { bundles },
-  } = useQuery(ethPriceQuery, {
-    pollInterval: 60000,
-  });
-
-  const {
-    data: { pair },
-  } = useQuery(pairQuery, {
-    query: pairQuery,
-    variables: { id },
-  });
-
-  useInterval(async () => {
-    await getPair(id);
-  }, 60000);
-
-  const { data: transactions } = useQuery(transactionsQuery, {
-    variables: { pairAddresses: [id] },
-    pollInterval: 60000,
-  });
-
-  const {
-    data: { pairDayDatas },
-  } = useQuery(pairDayDatasQuery, {
-    variables: {
-      pairs: [id],
-    },
-    pollInterval: 60000,
-  });
 
   const volumeUSD =
     pair?.volumeUSD === "0" ? pair?.untrackedVolumeUSD : pair?.volumeUSD;
@@ -161,8 +128,8 @@ function PairPage(props) {
       const untrackedVolumeUSD =
         currentValue?.token0.derivedETH * currentValue?.volumeToken0 +
         currentValue?.token1.derivedETH *
-          currentValue?.volumeToken1 *
-          bundles[0].ethPrice;
+        currentValue?.volumeToken1 *
+        bundles[0].ethPrice;
 
       const volumeUSD =
         currentValue?.volumeUSD === "0"
@@ -201,16 +168,16 @@ function PairPage(props) {
           </Box>
           <Box display="flex" alignItems="center" className={classes.links}>
             <Link
-              href={`https://app.swipe.org/add-liquidity?inputCurrency=${pair.token0.id}&outputCurrency=${pair.token1.id}`}
+              href={`https://swap.swipe.org/add-liquidity?inputCurrency=${pair.token0.id}&outputCurrency=${pair.token1.id}`}
               target="_blank"
               variant="body1"
               className={classes.firstLink}
             >
               Add Liquidity
             </Link>
-            
+
             <Link
-              href={`https://app.swipe.org/swap?inputCurrency=${pair.token0.id}&outputCurrency=${pair.token1.id}`}
+              href={`https://swap.swipe.org/swap?inputCurrency=${pair.token0.id}&outputCurrency=${pair.token1.id}`}
               target="_blank"
               variant="body1"
             >
@@ -409,9 +376,6 @@ function PairPage(props) {
           ]}
         />
       </Box>
-      {/* <Box my={4}>
-        <IntoTheBlock pairAddress={pair.id} />
-      </Box> */}
       <Box my={4}>
         <Transactions transactions={transactions} txCount={pair.txCount} />
       </Box>
@@ -419,52 +383,29 @@ function PairPage(props) {
   );
 }
 
-export async function getServerSideProps({ params }) {
+async function fetchProps(callback, id) {
   const client = getApollo();
 
-  const id = params.id.toLowerCase()
+  const { bundles } = await getEthPrice(client);
+  const { pair } = await getPair(id, client);
+  const pairDayDatas = await getPairDayDatas(id, client);
+  const transactions = await getTransactions([id], client);
 
-  // EthPrice
-  await client.query({
-    query: ethPriceQuery,
-  });
+  const props = {
+    bundles,
+    pair,
+    pairDayDatas,
+    transactions,
+  }
 
-  await getPair(id, client);
-
-  await client.query({
-    query: pairDayDatasQuery,
-    variables: {
-      pairs: [id],
-    },
-  });
-
-  await client.query({
-    query: transactionsQuery,
-    variables: {
-      pairAddresses: [id],
-    },
-  });
-
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+  if (callback) callback(props);
+  else return props;
 }
 
-// export async function getStaticPaths() {
-//   // const apollo = getApollo();
-
-//   // const { data } = await apollo.query({
-//   //   query: pairIdsQuery,
-//   // });
-
-//   // const paths = data.pairs.map((pair) => ({
-//   //   params: { id: pair.id },
-//   // }));
-
-//   return { paths: [], fallback: true };
-// }
+PairPage.getInitialProps = async function (ctx) {
+  const id = ctx.query ? ctx.query.id : ctx.req.url.replace('/pairs/', '');
+  const props = await fetchProps(null, id);
+  return props;
+}
 
 export default PairPage;

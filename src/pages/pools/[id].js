@@ -1,6 +1,5 @@
 import {
   AppShell,
-  Chart,
   Curves,
   KPI,
   Link,
@@ -17,82 +16,34 @@ import {
   useTheme,
 } from "@material-ui/core";
 import {
-  currencyFormatter,
-  ethPriceQuery,
   getApollo,
-  getEthPrice,
   getPool,
   getPoolHistories,
-  getPoolIds,
-  getPools,
-  getSwipeToken,
-  poolHistoryQuery,
-  poolQuery,
-  tokenQuery,
+  useProps,
 } from "app/core";
 
 import Head from "next/head";
-import { POOL_DENY } from "app/core/constants";
 import { ParentSize } from "@visx/responsive";
-import { deepPurple } from "@material-ui/core/colors";
-import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
 }));
 
-function PoolPage() {
+function PoolPage(props) {
   const router = useRouter();
+  const id = router.query.id.toLowerCase();
+  const [{
+    pool,
+    poolHistories,
+  }] = useProps(props, (props) => fetchProps(props, id));
 
   if (router.isFallback) {
     return <AppShell />;
   }
 
-  const classes = useStyles();
-
   const theme = useTheme();
-
-  const { id } = router.query;
-
-  const {
-    data: { pool },
-  } = useQuery(poolQuery, {
-    variables: {
-      id,
-    },
-    context: {
-      clientName: "masterchef",
-    },
-  });
-
-  const {
-    data: { poolHistories },
-  } = useQuery(poolHistoryQuery, {
-    variables: {
-      id,
-    },
-    context: {
-      clientName: "masterchef",
-    },
-  });
-
-  const {
-    data: { bundles },
-  } = useQuery(ethPriceQuery, {
-    pollInterval: 60000,
-  });
-
-  const {
-    data: { token },
-  } = useQuery(tokenQuery, {
-    variables: {
-      id: "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9",
-    },
-  });
-
-  const swipePrice =
-    parseFloat(token?.derivedETH) * parseFloat(bundles[0].ethPrice);
+  const classes = useStyles(theme);
 
   const {
     slpAge,
@@ -197,12 +148,12 @@ function PoolPage() {
           </Grid>
           <Grid item xs={12} sm="auto" className={classes.links}>
             <Link
-              href={`https://sushiswapclassic.org/farms/${
+              href={`https://swap.swipe.org/farm?slp=${
                 pool.liquidityPair.token0.symbol
               }-${pool.liquidityPair.token1.symbol.replace(
                 "WETH",
                 "ETH"
-              )}%20SLP`}
+              )}`}
               target="_blank"
               variant="body1"
             >
@@ -211,16 +162,6 @@ function PoolPage() {
           </Grid>
         </Grid>
 
-        {/* <Box display="flex" alignItems="center">
-          <PairIcon
-            base={pool.liquidityPair.token0.id}
-            quote={pool.liquidityPair.token1.id}
-          />
-          <Typography variant="h5" component="h1">
-            {pool.liquidityPair.token0.symbol}-
-            {pool.liquidityPair.token1.symbol} POOL
-          </Typography>
-        </Box> */}
       </PageHeader>
 
       <Grid container spacing={3}>
@@ -241,38 +182,6 @@ function PoolPage() {
             value={`${(pool.balance / 1e18).toFixed(4)} SLP`}
           />
         </Grid>
-        {/* <Grid item xs={12} sm={4}>
-          <KPI
-            title="Fees (24h)"
-            value={currencyFormatter.format(
-              pool.liquidityPair.volumeUSD * 0.03
-            )}
-          />
-        </Grid> */}
-        {/* 
-        <Grid item xs={12}>
-          <Paper
-            variant="outlined"
-            style={{
-              display: "flex",
-              position: "relative",
-              height: 400,
-              flex: 1,
-            }}
-          >
-            <ParentSize>
-              {({ width, height }) => (
-                <Curves
-                  width={width}
-                  height={height}
-                  title="Profitability"
-                  margin={{ top: 64, right: 32, bottom: 0, left: 64 }}
-                  data={[pendingSushi]}
-                />
-              )}
-            </ParentSize>
-          </Paper>
-        </Grid> */}
 
         <Grid item xs={12}>
           <Paper
@@ -393,17 +302,6 @@ function PoolPage() {
           </Paper>
         </Grid>
 
-        {/* <Grid item xs={12}>
-          <Chart
-            title="Virtual Profit/Loss USD"
-            data={profit}
-            height={400}
-            margin={{ top: 56, right: 24, bottom: 0, left: 56 }}
-            tooptip
-            brush
-          />
-        </Grid> */}
-
         <Grid item xs={12}>
           <Paper
             variant="outlined"
@@ -434,32 +332,29 @@ function PoolPage() {
         orderBy="amount"
         title="Top Liquidity Providers"
       />
-      {/* <pre>{JSON.stringify(pool, null, 2)}</pre> */}
     </AppShell>
   );
 }
 
-export async function getServerSideProps({ params: { id } }) {
+async function fetchProps(callback, id) {
   const client = getApollo();
-  await getEthPrice(client);
-  await getSwipeToken(client);
-  await getPool(id, client);
-  await getPoolHistories(id, client);
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+
+  const { pool } = await getPool(id, client);
+  const { poolHistories } = await getPoolHistories(id, client);
+
+  const props = {
+    pool,
+    poolHistories,
+  }
+
+  if (callback) callback(props);
+  else return props;
 }
 
-// export async function getStaticPaths() {
-//   // const client = getApollo();
-//   // const { pools } = await getPoolIds(client);
-//   // const paths = pools.map((pool) => ({
-//   //   params: { id: pool.id },
-//   // }));
-//   return { paths: [], fallback: true };
-// }
+PoolPage.getInitialProps = async function (ctx) {
+  const id = ctx.query ? ctx.query.id : ctx.req.url.replace('/pools/', '');
+  const props = await fetchProps(null, id);
+  return props;
+}
 
 export default PoolPage;

@@ -1,21 +1,13 @@
 import { AppShell, PoolTable } from "app/components";
-import { getApollo, getPools, poolsQuery, useInterval } from "app/core";
+import { getApollo, getPools, useProps } from "app/core";
 
 import Head from "next/head";
 import React from "react";
-import { useQuery } from "@apollo/client";
 
-function PoolsPage() {
-  const {
-    data: { pools },
-  } = useQuery(poolsQuery, {
-    context: {
-      clientName: "masterchef",
-    },
-  });
-
-  useInterval(getPools, 60000);
-
+function PoolsPage(props) {
+  const [{
+    pools,
+  }] = useProps(props, fetchProps);
   return (
     <AppShell>
       <Head>
@@ -31,15 +23,22 @@ function PoolsPage() {
   );
 }
 
-export async function getServerSideProps() {
+async function fetchProps(callback) {
   const client = getApollo();
-  await getPools(client);
-  return {
-    props: {
-      initialApolloState: client.cache.extract(),
-    },
-    // revalidate: 1,
-  };
+
+  const { pools } = await getPools(client);
+
+  const props = {
+    pools,
+  }
+
+  if (callback) callback(props);
+  else return props;
+}
+
+PoolsPage.getInitialProps = async function () {
+  const props = await fetchProps();
+  return props;
 }
 
 export default PoolsPage;

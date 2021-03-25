@@ -14,7 +14,6 @@ import {
 
 import { POOL_DENY } from "app/core/constants";
 import { getApollo } from "../apollo";
-import { sub } from "date-fns";
 
 export async function getPoolIds(client = getApollo()) {
   const {
@@ -25,17 +24,11 @@ export async function getPoolIds(client = getApollo()) {
       clientName: "masterchef",
     },
   });
-  await client.cache.writeQuery({
-    query: poolIdsQuery,
-    data: {
-      pools: pools.filter(
-        (pool) => !POOL_DENY.includes(pool.id) && pool.allocPoint !== "0"
-      ),
-    },
-  });
-  return await client.cache.readQuery({
-    query: poolIdsQuery,
-  });
+  return {
+    pools: pools.filter(
+      (pool) => !POOL_DENY.includes(pool.id) && pool.allocPoint !== "0"
+    ),
+  };
 }
 
 export async function getPoolUser(id, client = getApollo()) {
@@ -50,14 +43,7 @@ export async function getPoolUser(id, client = getApollo()) {
     },
   });
 
-  await client.cache.writeQuery({
-    query: poolUserQuery,
-    data,
-  });
-
-  return await client.cache.readQuery({
-    query: poolUserQuery,
-  });
+  return data;
 }
 
 export async function getPoolHistories(id, client = getApollo()) {
@@ -72,16 +58,9 @@ export async function getPoolHistories(id, client = getApollo()) {
     },
   });
 
-  await client.cache.writeQuery({
-    query: poolHistoryQuery,
-    data: {
-      poolHistories,
-    },
-  });
-
-  return await client.cache.readQuery({
-    query: poolHistoryQuery,
-  });
+  return {
+    poolHistories,
+  };
 }
 
 export async function getPool(id, client = getApollo()) {
@@ -104,19 +83,12 @@ export async function getPool(id, client = getApollo()) {
     fetchPolicy: "network-only",
   });
 
-  await client.cache.writeQuery({
-    query: poolQuery,
-    data: {
-      pool: {
-        ...pool,
-        liquidityPair,
-      },
+  return {
+    pool: {
+      ...pool,
+      liquidityPair,
     },
-  });
-
-  return await client.cache.readQuery({
-    query: poolQuery,
-  });
+  };
 }
 
 export async function getPools(client = getApollo()) {
@@ -134,8 +106,6 @@ export async function getPools(client = getApollo()) {
       return pool.pair;
     })
     .sort();
-
-  const pool45 = pools.find((p) => p.id === "45");
 
   const {
     data: { pairs },
@@ -168,74 +138,67 @@ export async function getPools(client = getApollo()) {
     variables: { user: "0x252dd6a11ef272a438a36d1a2370eed820099547" },
   });
 
-  await client.cache.writeQuery({
-    query: poolsQuery,
-    data: {
-      pools: pools
-        .filter(
-          (pool) =>
-            !POOL_DENY.includes(pool.id) &&
-            pool.allocPoint !== "0" &&
-            pool.accSwipePerShare !== "0" &&
-            pairs.find((pair) => pair?.id === pool.pair)
-        )
-        .map((pool) => {
-          const pair = pairs.find((pair) => pair.id === pool.pair);
+  return {
+    pools: pools
+      .filter(
+        (pool) =>
+          !POOL_DENY.includes(pool.id) &&
+          pool.allocPoint !== "0" &&
+          pool.accSwipePerShare !== "0" &&
+          pairs.find((pair) => pair?.id === pool.pair)
+      )
+      .map((pool) => {
+        const pair = pairs.find((pair) => pair.id === pool.pair);
 
-          const liquidityPosition = liquidityPositions.find(
-            (liquidityPosition) => liquidityPosition.pair.id === pair.id
-          );
+        const liquidityPosition = liquidityPositions.find(
+          (liquidityPosition) => liquidityPosition.pair.id === pair.id
+        );
 
-          const balance = Number(pool.balance / 1e18);
+        const balance = Number(pool.balance / 1e18);
 
-          const blocksPerHour = 3600 / averageBlockTime;
-          // const rewardPerBlock =
-          //   100 - 100 * (pool.allocPoint / pool.owner.totalAllocPoint);
+        const blocksPerHour = 3600 / averageBlockTime;
+        // const rewardPerBlock =
+        //   100 - 100 * (pool.allocPoint / pool.owner.totalAllocPoint);
 
-          // const roiPerBlock =
-          //   (Number(token.derivedETH) *
-          //     rewardPerBlock *
-          //     3 *
-          //     (Number(pool.allocPoint) / Number(pool.owner.totalAllocPoint))) /
-          //   (Number(pair.reserveETH) * (balance / Number(pair.totalSupply)));
+        // const roiPerBlock =
+        //   (Number(token.derivedETH) *
+        //     rewardPerBlock *
+        //     3 *
+        //     (Number(pool.allocPoint) / Number(pool.owner.totalAllocPoint))) /
+        //   (Number(pair.reserveETH) * (balance / Number(pair.totalSupply)));
 
-          const balanceUSD =
-            (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD);
+        const balanceUSD =
+          (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD);
 
-          const rewardPerBlock =	
-            ((pool.allocPoint / pool.owner.totalAllocPoint) *	
-              pool.owner.swipePerBlock) /	
-            1e18;
+        const rewardPerBlock =	
+          ((pool.allocPoint / pool.owner.totalAllocPoint) *	
+            pool.owner.swipePerBlock) /	
+          1e18;
 
 
-          const roiPerBlock = ((rewardPerBlock * 2) * swipePrice) / balanceUSD;
+        const roiPerBlock = ((rewardPerBlock * 2) * swipePrice) / balanceUSD;
 
-          const roiPerHour = roiPerBlock * blocksPerHour;
+        const roiPerHour = roiPerBlock * blocksPerHour;
 
-          const roiPerDay = roiPerHour * 24;
+        const roiPerDay = roiPerHour * 24;
 
-          const roiPerMonth = roiPerDay * 30;
+        const roiPerMonth = roiPerDay * 30;
 
-          const roiPerYear = roiPerMonth * 12;
+        const roiPerYear = roiPerMonth * 12;
 
-          return {
-            ...pool,
-            liquidityPair: pair,
-            roiPerBlock,
-            roiPerHour,
-            roiPerDay,
-            roiPerMonth,
-            roiPerYear,
-            rewardPerThousand: 1 * roiPerDay * (1000 / swipePrice),
-            tvl:
-              (pair.reserveUSD / pair.totalSupply) *
-              (liquidityPosition?.liquidityTokenBalance || 0),
-          };
-        }),
-    },
-  });
-
-  return await client.cache.readQuery({
-    query: poolsQuery,
-  });
+        return {
+          ...pool,
+          liquidityPair: pair,
+          roiPerBlock,
+          roiPerHour,
+          roiPerDay,
+          roiPerMonth,
+          roiPerYear,
+          rewardPerThousand: 1 * roiPerDay * (1000 / swipePrice),
+          tvl:
+            (pair.reserveUSD / pair.totalSupply) *
+            (liquidityPosition?.liquidityTokenBalance || 0),
+        };
+      }),
+  };
 }
