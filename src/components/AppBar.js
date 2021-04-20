@@ -24,6 +24,13 @@ import { darkModeVar } from "app/core";
 import useDetect from "../core/hooks/useDetect";
 import { useReactiveVar } from "@apollo/client";
 import { useRouter } from "next/router";
+import {
+  BASE_SYMBOLS,
+  TARGET_NETWORK,
+  TARGET_LINK,
+  getAsset,
+  NETWORK,
+} from "app/core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -143,7 +150,12 @@ export default function AppBar({
               <Typography variant="subtitle1" color="textPrimary" noWrap>
                 SushiSwap Analytics
               </Typography> */}
-              <a href="https://swap.swipe.org" target="_blank"><img src="/svgs/logo/logo.png" alt={process.env.NEXT_PUBLIC_APP_NAME} /></a>
+              <a href="https://swap.swipe.org" target="_blank">
+                <img
+                  src="/svgs/logo/logo.png"
+                  alt={process.env.NEXT_PUBLIC_APP_NAME}
+                />
+              </a>
             </Box>
           </Hidden>
           {/* <Typography
@@ -168,6 +180,28 @@ export default function AppBar({
             {!darkMode ? <Brightness4Outlined /> : <Brightness7Outlined />}
           </IconButton>
         </Tooltip> */}
+        <Tooltip title={`Switch to ${TARGET_NETWORK}`} enterDelay={300}>
+          <IconButton
+            edge="end"
+            onClick={() => {
+              window.location.href = TARGET_LINK;
+            }}
+            color="default"
+            aria-label={`Switch to ${TARGET_NETWORK}`}
+          >
+            {NETWORK == "binance" ? (
+              <img
+                src={getAsset(BASE_SYMBOLS[0], "ethereum")}
+                style={{ height: 38, position: "relative", top: 2 }}
+              />
+            ) : (
+              <img
+                src={getAsset(BASE_SYMBOLS[1], "binance")}
+                style={{ height: 38, position: "relative", top: 2 }}
+              />
+            )}
+          </IconButton>
+        </Tooltip>
       </Toolbar>
     </MuiAppBar>
   );

@@ -16,11 +16,25 @@ export const POOL_DENY = [];
 
 export const SWIPE_TOKEN = process.env.NEXT_PUBLIC_APP_BASE;
 export const NETWORK = process.env.NEXT_PUBLIC_APP_NETWORK;
-export const NETWORK_SWITCH = NETWORK === 'ethereum' ? 'https://bscinfo.swipe.org' : 'https://info.swipe.org';
+export const TARGET_NETWORK = NETWORK === "ethereum" ? "Binance" : "Ethereum";
+export const TARGET_LINK = NETWORK === "ethereum" ? "https://bscinfo.swipe.org" : "https://info.swipe.org";
+export const NETWORK_SWITCH =
+  NETWORK === "ethereum"
+    ? "https://bscinfo.swipe.org"
+    : "https://info.swipe.org";
 export const BASE_TOKEN = process.env.NEXT_PUBLIC_APP_TOKEN;
-export const BASE_SYMBOLS = ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'];
-export const BASE_SYMBOL = NETWORK === 'ethereum' ? 'ETH' : 'BNB';
+export const BASE_SYMBOLS = [
+  "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+];
+export function getAsset(address, network) {
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${
+    network === "ethereum" ? "ethereum" : "smartchain"
+  }/assets/${address}/logo.png`;
+}
+export const BASE_SYMBOL = NETWORK === "ethereum" ? "ETH" : "BNB";
 export const WRAP_TOKEN = `W${BASE_SYMBOL}`;
-export const SCAN_NAME = NETWORK === 'ethereum' ? 'Etherscan' : 'BscScan';
-export const SCAN_LINK = NETWORK === 'ethereum' ? 'https://etherscan.io' : 'https://bscscan.com';
-export const BASE_ASSET = NETWORK === 'ethereum' ? 'ethereum' : 'smartchain';
+export const SCAN_NAME = NETWORK === "ethereum" ? "Etherscan" : "BscScan";
+export const SCAN_LINK =
+  NETWORK === "ethereum" ? "https://etherscan.io" : "https://bscscan.com";
+export const BASE_ASSET = NETWORK === "ethereum" ? "ethereum" : "smartchain";
