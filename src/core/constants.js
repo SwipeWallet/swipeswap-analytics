@@ -15,7 +15,7 @@ export const EXCHANGE_CREATED_TIMESTAMP = 1599214239; // Todo
 export const POOL_DENY = [];
 
 export const SWIPE_TOKEN = process.env.NEXT_PUBLIC_APP_BASE;
-export const NETWORK = process.env.NEXT_PUBLIC_NETWORK;
+export const NETWORK = process.env.NEXT_PUBLIC_APP_NETWORK;
 export const BASE_TOKEN = NETWORK === 'ethereum' ? 'ETH' : 'BNB';
 export const WRAP_TOKEN = `W${BASE_TOKEN}`;
 export const SCAN_NAME = NETWORK === 'ethereum' ? 'Etherscan' : 'BscScan';
