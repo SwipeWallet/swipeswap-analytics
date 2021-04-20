@@ -11,7 +11,7 @@ function PairsPage(props) {
   return (
     <AppShell>
       <Head>
-        <title>Pairs | SwipeSwap Analytics</title>
+        <title>Pairs | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <PairTable title="Pairs" pairs={pairs} />
     </AppShell>

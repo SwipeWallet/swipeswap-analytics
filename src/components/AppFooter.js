@@ -19,7 +19,7 @@ export default function AppFooter() {
           <Typography variant="body2" color="textSecondary" align="center">
             {"Copyright © "}
             <MuiLink color="inherit" href="/">
-              SwipeSwap Analytics
+              {process.env.NEXT_PUBLIC_APP_NAME}
             </MuiLink>{" "}
             {new Date().getFullYear()}
             {"."}

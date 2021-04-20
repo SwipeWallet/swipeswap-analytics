@@ -55,12 +55,12 @@ function IndexPage(props) {
   return (
     <AppShell>
       <Head>
-        <title>Dashboard | SwipeSwap Analytics</title>
+        <title>Dashboard | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <Box mb={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12} md={6}>
-            <Typography variant="h4">SwipeSwap Analytics</Typography>
+            <Typography variant="h4">{process.env.NEXT_PUBLIC_APP_NAME}</Typography>
           </Grid>
           <Grid item xs={12} sm={12} md={6}>
             <Search pairs={pairs} tokens={tokens} />

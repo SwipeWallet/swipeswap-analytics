@@ -21,8 +21,7 @@ export const bar = from([
 export const masterchef = from([
   new RetryLink(),
   new HttpLink({
-    // uri: "https://api.thegraph.com/subgraphs/name/sushiswap/master-chef",
-    uri: "https://api.thegraph.com/subgraphs/name/swipewallet/swipeswap",
+    uri: process.env.NEXT_PUBLIC_APP_MASTERCHEF,
     shouldBatch: true,
   }),
 ]);
@@ -30,8 +29,7 @@ export const masterchef = from([
 export const exchange = from([
   new RetryLink(),
   new HttpLink({
-    // uri: "https://api.thegraph.com/subgraphs/name/matthewlilley/exchange",
-    uri: "https://api.thegraph.com/subgraphs/name/swipewallet/exchange",
+    uri: process.env.NEXT_PUBLIC_APP_EXCHANGE,
     shouldBatch: true,
   }),
 ]);
@@ -39,7 +37,7 @@ export const exchange = from([
 export const blocklytics = from([
   new RetryLink(),
   new HttpLink({
-    uri: "https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks",
+    uri: process.env.NEXT_PUBLIC_APP_BLOCKLYTICS,
     shouldBatch: true,
   }),
 ]);

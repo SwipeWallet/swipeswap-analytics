@@ -25,6 +25,7 @@ import {
 import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
 import { useRouter } from "next/router";
+import { BASE_TOKEN, WRAP_TOKEN } from "../../core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -123,7 +124,7 @@ function PoolPage(props) {
   return (
     <AppShell>
       <Head>
-        <title>Pool {id} | SwipeSwap Analytics</title>
+        <title>Pool {id} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
 
       <PageHeader mb={3}>
@@ -151,8 +152,8 @@ function PoolPage(props) {
               href={`https://swap.swipe.org/farm?slp=${
                 pool.liquidityPair.token0.symbol
               }-${pool.liquidityPair.token1.symbol.replace(
-                "WETH",
-                "ETH"
+                WRAP_TOKEN,
+                BASE_TOKEN
               )}`}
               target="_blank"
               variant="body1"

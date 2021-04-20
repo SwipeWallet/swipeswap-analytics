@@ -43,7 +43,7 @@ import { getUnixTime, startOfMinute, startOfSecond } from "date-fns";
 
 import { AvatarGroup } from "@material-ui/lab";
 import Head from "next/head";
-import { POOL_DENY } from "app/core/constants";
+import { BASE_ASSET, POOL_DENY, SWIPE_TOKEN } from "app/core/constants";
 import { toChecksumAddress } from "web3-utils";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -109,7 +109,7 @@ function UserPage() {
     data: { token },
   } = useQuery(tokenQuery, {
     variables: {
-      id: "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9",
+      id: SWIPE_TOKEN,
     },
   });
 
@@ -264,7 +264,7 @@ function UserPage() {
   return (
     <AppShell>
       <Head>
-        <title>User {id} | SwipeSwap Analytics</title>
+        <title>User {id} | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
 
       <PageHeader>
@@ -350,12 +350,12 @@ function UserPage() {
                           className={classes.avatar}
                           imgProps={{ loading: "lazy" }}
                           alt="SUSHI"
-                          src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${toChecksumAddress(
-                            "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9"
+                          src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${BASE_ASSET}/assets/${toChecksumAddress(
+                            SWIPE_TOKEN
                           )}/logo.png`}
                         />
                         <Link
-                          href={`/tokens/0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9`}
+                          href={`/tokens/${SWIPE_TOKEN}`}
                           variant="body2"
                           noWrap
                         >

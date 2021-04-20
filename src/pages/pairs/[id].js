@@ -27,6 +27,7 @@ import { ParentSize } from "@visx/responsive";
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
+import { SCAN_LINK, SCAN_NAME } from "app/core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -155,7 +156,7 @@ function PairPage(props) {
     <AppShell>
       <Head>
         <title>
-          {pair.token0.symbol}-{pair.token1.symbol} | SwipeSwap Analytics
+          {pair.token0.symbol}-{pair.token1.symbol} | {process.env.NEXT_PUBLIC_APP_NAME}
         </title>
       </Head>
       <PageHeader>
@@ -360,7 +361,7 @@ function PairPage(props) {
               label: `${pair.token1.symbol} Address`,
               maxWidth: "250px",
             },
-            { key: "etherscan", label: "Etherscan", align: "right" },
+            { key: "etherscan", label: SCAN_NAME, align: "right" },
           ]}
           bodyCells={[
             <Typography variant="body2" noWrap>
@@ -372,7 +373,7 @@ function PairPage(props) {
             <Typography variant="body2" noWrap>
               {pair.token1.id}
             </Typography>,
-            <Link href={`https://etherscan.io/address/${pair.id}`}>View</Link>,
+            <Link href={`${SCAN_LINK}/address/${pair.id}`} target="_blank">View</Link>,
           ]}
         />
       </Box>

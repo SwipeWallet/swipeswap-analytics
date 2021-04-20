@@ -17,7 +17,7 @@ function LosersPage() {
   return (
     <AppShell>
       <Head>
-        <title>Top Losers | SwipeSwap Analytics</title>
+        <title>Top Losers | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <LosersList pairs={pairs} />
     </AppShell>

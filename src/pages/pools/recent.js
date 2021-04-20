@@ -11,7 +11,7 @@ function RecentPoolsPage(props) {
   return (
     <AppShell>
       <Head>
-        <title>Recently Added Pools | SwipeSwap Analytics</title>
+        <title>Recently Added Pools | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <PoolTable
         title="Recently Added Pools"

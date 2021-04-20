@@ -11,7 +11,7 @@ function PoolsPage(props) {
   return (
     <AppShell>
       <Head>
-        <title>Pools | SwipeSwap Analytics</title>
+        <title>Pools | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <PoolTable
         pools={pools}

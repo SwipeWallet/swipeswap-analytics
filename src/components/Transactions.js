@@ -6,6 +6,7 @@ import SortableTable from "./SortableTable";
 import { Typography } from "@material-ui/core";
 import formatDistance from "date-fns/formatDistance";
 import { makeStyles } from "@material-ui/core/styles";
+import { SCAN_LINK } from "app/core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -97,7 +98,7 @@ export default function Transactions({ transactions, txCount }) {
             key: "to",
             label: "To",
             render: (row) => (
-              <Link href={`https://etherscan.io/address/${row.to}`}>
+              <Link href={`${SCAN_LINK}/address/${row.to}`} target="_blank">
                 {row.to}
               </Link>
             ),

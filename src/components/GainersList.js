@@ -7,6 +7,7 @@ import SortableTable from "./SortableTable";
 import TokenIcon from "./TokenIcon";
 import { formatCurrency } from "app/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { BASE_TOKEN, WRAP_TOKEN } from "app/core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -33,9 +34,9 @@ export default function GainersList({ pairs }) {
                 <PairIcon base={row.token0.id} quote={row.token1.id} />
                 <Link href={`/pairs/${row.id}`} variant="body2" noWrap>
                   {`${row.token0.symbol.replace(
-                    "WETH",
-                    "ETH"
-                  )}-${row.token1.symbol.replace("WETH", "ETH")}`}
+                    WRAP_TOKEN,
+                    BASE_TOKEN
+                  )}-${row.token1.symbol.replace(WRAP_TOKEN, BASE_TOKEN)}`}
                 </Link>
               </Box>
             ),

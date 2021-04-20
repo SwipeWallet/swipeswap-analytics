@@ -17,7 +17,7 @@ function GainersPage() {
   return (
     <AppShell>
       <Head>
-        <title>Top Gainers | SwipeSwap Analytics</title>
+        <title>Top Gainers | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <GainersList pairs={pairs} />
     </AppShell>

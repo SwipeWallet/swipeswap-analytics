@@ -28,6 +28,7 @@ import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
+import { SCAN_LINK, SCAN_NAME } from "app/core/constants";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -243,13 +244,13 @@ function TokenPage(props) {
             { key: "name", label: "Name" },
             { key: "symbol", label: "Symbol" },
             { key: "address", label: "Address" },
-            { key: "etherscan", label: "Etherscan", align: "right" },
+            { key: "etherscan", label: SCAN_NAME, align: "right" },
           ]}
           bodyCells={[
             token.name,
             token.symbol,
             token.id,
-            <Link href={`https://etherscan.io/address/${token.id}`}>View</Link>,
+            <Link href={`${SCAN_LINK}/address/${token.id}`} target="_blank">View</Link>,
           ]}
         />
       </Box>

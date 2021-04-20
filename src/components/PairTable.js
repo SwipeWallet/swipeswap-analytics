@@ -1,6 +1,6 @@
 import { Box } from "@material-ui/core";
 import Link from "./Link";
-import { PAIR_DENY } from "app/core/constants";
+import { BASE_TOKEN, PAIR_DENY, WRAP_TOKEN } from "app/core/constants";
 import PairIcon from "./PairIcon";
 import Percent from "./Percent";
 import React from "react";
@@ -45,9 +45,9 @@ export default function PairTable({ pairs, title, ...rest }) {
       return {
         ...pair,
         displayName: `${pair.token0.symbol.replace(
-          "WETH",
-          "ETH"
-        )}-${pair.token1.symbol.replace("WETH", "ETH")}`,
+          WRAP_TOKEN,
+          BASE_TOKEN
+        )}-${pair.token1.symbol.replace(WRAP_TOKEN, BASE_TOKEN)}`,
         oneDayVolume: !Number.isNaN(oneDayVolume) ? oneDayVolume : 0,
         sevenDayVolume: !Number.isNaN(sevenDayVolume) ? sevenDayVolume : 0,
         oneDayFees: !Number.isNaN(oneDayFees) ? oneDayFees : 0,

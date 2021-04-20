@@ -22,7 +22,7 @@ function RecentPairsPage() {
   return (
     <AppShell>
       <Head>
-        <title>Recently Added Pairs | SwipeSwap Analytics</title>
+        <title>Recently Added Pairs | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <PairTable pairs={pairs} orderBy="timestamp" order="desc" />
     </AppShell>

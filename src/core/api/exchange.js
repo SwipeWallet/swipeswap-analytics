@@ -13,6 +13,7 @@ import {
   getTwoDayBlock,
 } from "../api/blocks";
 
+import { SWIPE_TOKEN } from "app/core/constants";
 import { getApollo } from "../apollo";
 
 export async function getFactory(client = getApollo()) {
@@ -50,7 +51,7 @@ export async function getFactory(client = getApollo()) {
 }
 
 export async function getSwipeToken(client = getApollo()) {
-  return await getToken("0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9", client);
+  return await getToken(SWIPE_TOKEN.toLowerCase(), client);
 }
 
 export async function getDayData(client = getApollo()) {

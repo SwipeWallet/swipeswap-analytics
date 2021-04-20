@@ -12,7 +12,7 @@ import {
   poolsQuery,
 } from "../queries/masterchef";
 
-import { POOL_DENY } from "app/core/constants";
+import { POOL_DENY, SWIPE_TOKEN } from "app/core/constants";
 import { getApollo } from "../apollo";
 
 export async function getPoolIds(client = getApollo()) {
@@ -92,6 +92,10 @@ export async function getPool(id, client = getApollo()) {
 }
 
 export async function getPools(client = getApollo()) {
+  if (process.env.NEXT_PUBLIC_APP_NETWORK === "binance") { // Todo
+    return { pools: [] };
+  }
+
   const {
     data: { pools },
   } = await client.query({
@@ -125,7 +129,7 @@ export async function getPools(client = getApollo()) {
   const ethPrice = bundles[0].ethPrice;
 
   const { token } = await getToken(
-    "0x8ce9137d39326ad0cd6491fb5cc0cba0e089b6a9"
+    SWIPE_TOKEN.toLowerCase()
   );
 
   const swipePrice = ethPrice * token.derivedETH;
@@ -135,7 +139,7 @@ export async function getPools(client = getApollo()) {
     data: { liquidityPositions },
   } = await client.query({
     query: liquidityPositionSubsetQuery,
-    variables: { user: "0x252dd6a11ef272a438a36d1a2370eed820099547" },
+    variables: { user: "0x252dd6a11ef272a438a36d1a2370eed820099547" }, // Todo
   });
 
   return {
@@ -170,13 +174,12 @@ export async function getPools(client = getApollo()) {
         const balanceUSD =
           (balance / Number(pair.totalSupply)) * Number(pair.reserveUSD);
 
-        const rewardPerBlock =	
-          ((pool.allocPoint / pool.owner.totalAllocPoint) *	
-            pool.owner.swipePerBlock) /	
+        const rewardPerBlock =
+          ((pool.allocPoint / pool.owner.totalAllocPoint) *
+            pool.owner.swipePerBlock) /
           1e18;
 
-
-        const roiPerBlock = ((rewardPerBlock * 2) * swipePrice) / balanceUSD;
+        const roiPerBlock = (rewardPerBlock * 2 * swipePrice) / balanceUSD;
 
         const roiPerHour = roiPerBlock * blocksPerHour;
 

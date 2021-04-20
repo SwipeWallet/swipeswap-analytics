@@ -3,6 +3,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import { makeStyles } from "@material-ui/core/styles";
 import { toChecksumAddress } from "web3-utils";
 import { useMemo } from "react";
+import { BASE_ASSET } from "app/core/constants";
 const useStyles = makeStyles((theme) => ({
   root: {
     marginRight: theme.spacing(2),
@@ -15,7 +16,7 @@ export default function TokenIcon({ id, ...rest }) {
   const classes = useStyles();
   const src = useMemo(
     () =>
-      `https://raw.githubusercontent.com/swipewallet/assets/master/blockchains/ethereum/assets/${toChecksumAddress(
+      `https://raw.githubusercontent.com/swipewallet/assets/master/blockchains/${BASE_ASSET}/assets/${toChecksumAddress(
         id
       )}/logo.png`,
     [id]

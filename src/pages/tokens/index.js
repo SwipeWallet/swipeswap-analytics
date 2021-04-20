@@ -22,7 +22,7 @@ function TokensPage(props) {
   return (
     <AppShell>
       <Head>
-        <title>Tokens | SwipeSwap Analytics</title>
+        <title>Tokens | {process.env.NEXT_PUBLIC_APP_NAME}</title>
       </Head>
       <TokenTable title="Tokens" {...{ tokens, bundles, oneDayEthPriceData, sevenDayEthPriceData }} />
     </AppShell>
