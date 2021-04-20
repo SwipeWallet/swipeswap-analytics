@@ -6,7 +6,7 @@ import React from "react";
 import SortableTable from "./SortableTable";
 import { formatCurrency } from "app/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { BASE_TOKEN, WRAP_TOKEN } from "app/core/constants";
+import { BASE_SYMBOL, WRAP_TOKEN } from "app/core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -34,8 +34,8 @@ export default function LosersList({ pairs }) {
                 <Link href={`/pairs/${row.id}`} variant="body2" noWrap>
                   {`${row.token0.symbol.replace(
                     WRAP_TOKEN,
-                    BASE_TOKEN
-                  )}-${row.token1.symbol.replace(WRAP_TOKEN, BASE_TOKEN)}`}
+                    BASE_SYMBOL
+                  )}-${row.token1.symbol.replace(WRAP_TOKEN, BASE_SYMBOL)}`}
                 </Link>
               </Box>
             ),

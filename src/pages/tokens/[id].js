@@ -124,8 +124,7 @@ function TokenPage(props) {
     <AppShell>
       <Head>
         <title>
-          {currencyFormatter.format(price || 0)} | {token.symbol} | SwipeSwap
-          Analytics
+          {currencyFormatter.format(price || 0)} | {token.symbol} | {process.env.NEXT_PUBLIC_APP_NAME}
         </title>
       </Head>
       <PageHeader>

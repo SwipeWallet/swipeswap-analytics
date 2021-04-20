@@ -104,7 +104,7 @@ export default function AppNavigation() {
               Swipe Analytics
             </Typography>
           </Box> */}
-          <img src="/svgs/logo/logo.png" alt="Swipe Analysis" />
+          <a href="https://swap.swipe.org" target="_blank"><img src="/svgs/logo/logo.png" alt={process.env.NEXT_PUBLIC_APP_NAME} /></a>
         </Hidden>
       </div>
       <List

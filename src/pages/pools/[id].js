@@ -25,7 +25,7 @@ import {
 import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
 import { useRouter } from "next/router";
-import { BASE_TOKEN, WRAP_TOKEN } from "../../core/constants";
+import { BASE_SYMBOL, WRAP_TOKEN } from "../../core/constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -153,7 +153,7 @@ function PoolPage(props) {
                 pool.liquidityPair.token0.symbol
               }-${pool.liquidityPair.token1.symbol.replace(
                 WRAP_TOKEN,
-                BASE_TOKEN
+                BASE_SYMBOL
               )}`}
               target="_blank"
               variant="body1"

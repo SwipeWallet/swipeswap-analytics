@@ -24,7 +24,7 @@ import {
 
 import Head from "next/head";
 import { ParentSize } from "@visx/responsive";
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useRouter } from "next/router";
 import { SCAN_LINK, SCAN_NAME } from "app/core/constants";
@@ -67,12 +67,10 @@ const useStyles = makeStyles((theme) => ({
 function PairPage(props) {
   const router = useRouter();
   const id = router.query.id.toLowerCase();
-  const [{
-    bundles,
-    pair,
-    pairDayDatas,
-    transactions,
-  }] = useProps(props, (props) => fetchProps(props, id));
+  const [{ bundles, pair, pairDayDatas, transactions }] = useProps(
+    props,
+    (props) => fetchProps(props, id)
+  );
 
   if (router.isFallback) {
     return <AppShell />;
@@ -129,8 +127,8 @@ function PairPage(props) {
       const untrackedVolumeUSD =
         currentValue?.token0.derivedETH * currentValue?.volumeToken0 +
         currentValue?.token1.derivedETH *
-        currentValue?.volumeToken1 *
-        bundles[0].ethPrice;
+          currentValue?.volumeToken1 *
+          bundles[0].ethPrice;
 
       const volumeUSD =
         currentValue?.volumeUSD === "0"
@@ -150,13 +148,19 @@ function PairPage(props) {
     { liquidity: [], volume: [] }
   );
 
-  // console.log(pair);
+  useEffect(() => {
+    if (pair && (!pair.token0 || !pair.token1)) {
+      router.push("/");
+    }
+  }, [pair]);
 
+  if (!pair || !pair.token0 || !pair.token1) return null;
   return (
     <AppShell>
       <Head>
         <title>
-          {pair.token0.symbol}-{pair.token1.symbol} | {process.env.NEXT_PUBLIC_APP_NAME}
+          {pair.token0.symbol}-{pair.token1.symbol} |{" "}
+          {process.env.NEXT_PUBLIC_APP_NAME}
         </title>
       </Head>
       <PageHeader>
@@ -373,7 +377,9 @@ function PairPage(props) {
             <Typography variant="body2" noWrap>
               {pair.token1.id}
             </Typography>,
-            <Link href={`${SCAN_LINK}/address/${pair.id}`} target="_blank">View</Link>,
+            <Link href={`${SCAN_LINK}/address/${pair.id}`} target="_blank">
+              View
+            </Link>,
           ]}
         />
       </Box>
@@ -397,16 +403,16 @@ async function fetchProps(callback, id) {
     pair,
     pairDayDatas,
     transactions,
-  }
+  };
 
   if (callback) callback(props);
   else return props;
 }
 
 PairPage.getInitialProps = async function (ctx) {
-  const id = ctx.query ? ctx.query.id : ctx.req.url.replace('/pairs/', '');
+  const id = ctx.query ? ctx.query.id : ctx.req.url.replace("/pairs/", "");
   const props = await fetchProps(null, id);
   return props;
-}
+};
 
 export default PairPage;
